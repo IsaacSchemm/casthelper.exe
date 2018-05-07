@@ -38,6 +38,8 @@ namespace CastHelper {
 
 			if (comboBox1.Items.Count == 0) {
 				MessageBox.Show(this, "Could not find any Roku devices on the local network.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			} else {
+				comboBox1.SelectedIndex = 0;
 			}
 
 			btnPlay.Enabled = true;
@@ -87,6 +89,9 @@ namespace CastHelper {
 					case "audio":
 					case "video":
 					case "image":
+						if (contentType == "audio/x-mpegurl") {
+							type = "video";
+						}
 						break;
 					case "text":
 						MessageBox.Show(this, "This URL refers to a web page or document, not to a video, audio, or photo resource.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
