@@ -68,7 +68,7 @@ namespace CastHelper {
 						int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
 						if (code / 100 == 3) {
 							// redirect
-							txtUrl.Text = resp.Headers["Location"];
+							txtUrl.Text = new Uri(uri, resp.Headers["Location"]).AbsoluteUri;
 						} else {
 							contentType = resp.ContentType;
 							break;
