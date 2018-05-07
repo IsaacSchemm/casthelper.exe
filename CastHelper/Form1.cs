@@ -13,8 +13,11 @@ using System.Windows.Forms;
 
 namespace CastHelper {
 	public partial class Form1 : Form {
+		private readonly CookieContainer _cookieContainer;
+
 		public Form1() {
 			InitializeComponent();
+			_cookieContainer = new CookieContainer();
 		}
 
 		private async void Form1_Shown(object sender, EventArgs e) {
@@ -59,6 +62,7 @@ namespace CastHelper {
 					req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*,image/*";
 					req.UserAgent = "casthelper.exe/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
 					req.AllowAutoRedirect = false;
+					req.CookieContainer = _cookieContainer;
 					using (var resp = await req.GetResponseAsync())
 					using (var s = resp.GetResponseStream()) {
 						int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
