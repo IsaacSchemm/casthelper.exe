@@ -18,6 +18,8 @@ namespace CastHelper {
 		}
 
 		private async void Form1_Shown(object sender, EventArgs e) {
+			btnPlay.Enabled = false;
+
 			var client = new RokuDeviceDiscoveryClient();
 			using (var tokenSource = new CancellationTokenSource()) {
 				var task = client.DiscoverDevicesAsync(ctx => {
@@ -25,11 +27,6 @@ namespace CastHelper {
 					return Task.FromResult(false);
 				}, tokenSource.Token);
 				tokenSource.CancelAfter(3000);
-				//progressBar1.Maximum = 3000;
-				//while (progressBar1.Value < progressBar1.Maximum) {
-				//	progressBar1.Value = Math.Min(progressBar1.Value + 250, progressBar1.Maximum);
-				//	await Task.Delay(250);
-				//}
 				try {
 					await task;
 				} catch (TaskCanceledException) { }
@@ -39,6 +36,8 @@ namespace CastHelper {
 			if (comboBox1.Items.Count == 0) {
 				MessageBox.Show(this, "Could not find any Roku devices on the local network.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
+
+			btnPlay.Enabled = true;
 		}
 
 		private async void btnPlay_Click(object sender, EventArgs e) {
@@ -50,6 +49,7 @@ namespace CastHelper {
 
 				var req = WebRequest.CreateHttp(txtUrl.Text);
 				req.Method = "HEAD";
+				req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*,image/*,*/*;q=0.9";
 				req.UserAgent = "casthelper.exe/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
 				using (var resp = await req.GetResponseAsync())
 				using (var s = resp.GetResponseStream()) {
@@ -61,6 +61,9 @@ namespace CastHelper {
 					case "audio":
 					case "video":
 					case "image":
+						break;
+					case "text":
+						MessageBox.Show(this, "This URL refers to a web page or document, not to a video, audio, or photo resource.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						break;
 					default:
 						if (contentType.StartsWith("application/vnd.apple.mpegurl")) {
@@ -96,7 +99,7 @@ namespace CastHelper {
 					MessageBox.Show(url);
 				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
-				MessageBox.Show(this, "The requested URL could not be found. Make sure you haven't mistyped the URL. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(this, "No media was found at the given URL - make sure that you have typed the URL correctly. For live streams, this may also mean that the stream has not yet started. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode != null) {
 				int status = (int)(ex.Response as HttpWebResponse)?.StatusCode;
 				MessageBox.Show(this, $"An unknown error occurred. (HTTP {status})", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -108,6 +111,10 @@ namespace CastHelper {
 			}
 
 			btnPlay.Enabled = true;
+		}
+
+		private void btnCancel_Click(object sender, EventArgs e) {
+			Close();
 		}
 	}
 }
