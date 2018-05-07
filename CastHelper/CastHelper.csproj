@@ -75,6 +75,12 @@
     <Compile Include="RokuDotNet\src\RokuDotNet.Client\RokuDevice.cs" />
     <Compile Include="RokuDotNet\src\RokuDotNet.Client\RokuDeviceDiscoveryClient.cs" />
     <Compile Include="RokuDotNet\src\RokuDotNet.Client\RokuDeviceDiscoveryClientExtensions.cs" />
+    <Compile Include="SelectTypeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectTypeForm.Designer.cs">
+      <DependentUpon>SelectTypeForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -87,6 +93,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SelectTypeForm.resx">
+      <DependentUpon>SelectTypeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

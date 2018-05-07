@@ -56,7 +56,45 @@ namespace CastHelper {
 					contentType = resp.ContentType;
 				}
 
-				MessageBox.Show(contentType);
+				string type = contentType.Split('/').First();
+				switch (type) {
+					case "audio":
+					case "video":
+					case "image":
+						break;
+					default:
+						if (contentType.StartsWith("application/vnd.apple.mpegurl")) {
+							type = "video";
+						} else if (contentType.StartsWith("application/dash+xml")) {
+							type = "video";
+						} else if (contentType.StartsWith("application/vnd.ms-sstr+xml")) {
+							type = "video";
+						} else {
+							using (var f = new SelectTypeForm()) {
+								if (f.ShowDialog(this) == DialogResult.OK) {
+									type = f.SelectedType;
+								}
+							}
+						}
+						break;
+				}
+
+				string url = null;
+				switch (type) {
+					case "audio":
+						url = $"/input/15985?t=a&u={WebUtility.UrlEncode(txtUrl.Text)}&k=(null)";
+						break;
+					case "video":
+						url = $"/input/15985?t=v&u={WebUtility.UrlEncode(txtUrl.Text)}&k=(null)";
+						break;
+					case "image":
+						url = $"/input/15985?t=p&u={WebUtility.UrlEncode(txtUrl.Text)}";
+						break;
+				}
+
+				if (url != null) {
+					MessageBox.Show(url);
+				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
 				MessageBox.Show(this, "The requested URL could not be found. Make sure you haven't mistyped the URL. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode != null) {
