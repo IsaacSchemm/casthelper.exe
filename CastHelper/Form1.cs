@@ -41,19 +41,39 @@ namespace CastHelper {
 		}
 
 		private async void btnPlay_Click(object sender, EventArgs e) {
+			comboBox1.Enabled = false;
+			txtUrl.Enabled = false;
 			btnPlay.Enabled = false;
 
 			try {
 				// Get type of media
-				string contentType;
+				string contentType = null;
 
-				var req = WebRequest.CreateHttp(txtUrl.Text);
-				req.Method = "HEAD";
-				req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*,image/*,*/*;q=0.9";
-				req.UserAgent = "casthelper.exe/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
-				using (var resp = await req.GetResponseAsync())
-				using (var s = resp.GetResponseStream()) {
-					contentType = resp.ContentType;
+				for (int i = 0; i < 50; i++) {
+					Uri uri = Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out Uri tmp1) ? tmp1
+						: Uri.TryCreate("http://" + txtUrl.Text, UriKind.Absolute, out Uri tmp2) ? tmp2
+							: throw new FormatException("You must enter a valid URL.");
+
+					var req = WebRequest.CreateHttp(uri);
+					req.Method = "HEAD";
+					req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*,image/*";
+					req.UserAgent = "casthelper.exe/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
+					req.AllowAutoRedirect = false;
+					using (var resp = await req.GetResponseAsync())
+					using (var s = resp.GetResponseStream()) {
+						int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
+						if (code / 100 == 3) {
+							// redirect
+							txtUrl.Text = resp.Headers["Location"];
+						} else {
+							contentType = resp.ContentType;
+							break;
+						}
+					}
+				}
+
+				if (contentType == null) {
+					throw new Exception("This URL redirected too many times.");
 				}
 
 				string type = contentType.Split('/').First();
@@ -100,6 +120,8 @@ namespace CastHelper {
 				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
 				MessageBox.Show(this, "No media was found at the given URL - make sure that you have typed the URL correctly. For live streams, this may also mean that the stream has not yet started. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.Gone) {
+				MessageBox.Show(this, "This URL no longer exists. You might need to obtain a new URL. (HTTP 410)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode != null) {
 				int status = (int)(ex.Response as HttpWebResponse)?.StatusCode;
 				MessageBox.Show(this, $"An unknown error occurred. (HTTP {status})", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -110,6 +132,8 @@ namespace CastHelper {
 				MessageBox.Show(this, "An unknown error occurred.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
+			comboBox1.Enabled = true;
+			txtUrl.Enabled = true;
 			btnPlay.Enabled = true;
 		}
 
