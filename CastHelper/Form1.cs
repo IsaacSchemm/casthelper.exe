@@ -40,6 +40,7 @@ namespace CastHelper {
 				MessageBox.Show(this, "Could not find any Roku devices on the local network.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} else {
 				comboBox1.SelectedIndex = 0;
+				txtUrl.Focus();
 			}
 
 			btnPlay.Enabled = true;
@@ -115,13 +116,15 @@ namespace CastHelper {
 
 				switch (type) {
 					case "audio":
-						url = $"/input/15985?t=a&u={WebUtility.UrlEncode(txtUrl.Text)}&k=(null)";
+						string subtype = contentType.Split('/', ';', ',')[1];
+						if (subtype == "mpeg") subtype = "mp3";
+						url = $"/input/15985?t=a&u={WebUtility.UrlEncode(txtUrl.Text)}&songname=(null)&artistname=(null)&songformat={subtype}&albumarturl=(null)";
 						break;
 					case "video":
 						url = $"/input/15985?t=v&u={WebUtility.UrlEncode(txtUrl.Text)}&k=(null)";
 						break;
 					case "image":
-						url = $"/input/15985?t=p&u={WebUtility.UrlEncode(txtUrl.Text)}";
+						url = $"/input/15985?t=p&u={WebUtility.UrlEncode(txtUrl.Text)}&tr=crossfade";
 						break;
 				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
