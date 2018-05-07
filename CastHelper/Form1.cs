@@ -124,7 +124,7 @@ namespace CastHelper {
 						url = $"/input/15985?t=v&u={WebUtility.UrlEncode(txtUrl.Text)}&k=(null)";
 						break;
 					case "image":
-						url = $"/input/15985?t=p&u={WebUtility.UrlEncode(txtUrl.Text)}&tr=crossfade";
+						throw new NotImplementedException("Showing images on Roku is not currently supported.");
 						break;
 				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
@@ -135,6 +135,8 @@ namespace CastHelper {
 				int status = (int)(ex.Response as HttpWebResponse)?.StatusCode;
 				MessageBox.Show(this, $"An unknown error occurred. (HTTP {status})", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (FormatException ex) {
+				MessageBox.Show(this, ex.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			} catch (NotImplementedException ex) {
 				MessageBox.Show(this, ex.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (Exception ex) {
 				Console.Error.WriteLine(ex);
