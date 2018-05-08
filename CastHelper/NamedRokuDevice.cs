@@ -35,11 +35,21 @@ namespace CastHelper {
 			}
 		}
 
-		public async Task PlayAudioAsync(string mediaUrl, string contentType) {
+		public async Task PlayAudioAsync(string mediaUrl, string contentType = null) {
 			try {
-				string subtype = contentType.Split('/', ';', ',')[1];
-				if (subtype == "mpeg") subtype = "mp3";
-				var req = WebRequest.CreateHttp(new Uri(Location, $"/input/15985?t=a&u={WebUtility.UrlEncode(mediaUrl)}&songname=(null)&artistname=(null)&songformat={subtype}&albumarturl=(null)"));
+				string mediatype;
+				switch (contentType) {
+					case "audio/mpeg":
+						mediatype = "mp3";
+						break;
+					case "audio/mp4":
+						mediatype = "m4a";
+						break;
+					default:
+						mediatype = mediaUrl.Split('.').Last();
+						break;
+				}
+				var req = WebRequest.CreateHttp(new Uri(Location, $"/input/15985?t=a&u={WebUtility.UrlEncode(mediaUrl)}&songname=(null)&artistname=(null)&songformat={WebUtility.UrlEncode(mediatype)}&albumarturl=(null)"));
 				req.Method = "POST";
 				req.UserAgent = Program.UserAgent;
 				using (var resp = await req.GetResponseAsync())
