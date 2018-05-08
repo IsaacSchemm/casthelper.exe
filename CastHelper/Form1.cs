@@ -27,7 +27,9 @@ namespace CastHelper {
 			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(async () => {
 				try {
 					var deviceInfo = await e.Device.Query.GetDeviceInfoAsync();
-					AddDevice(new NamedRokuDevice(e.Device, deviceInfo.UserDeviceName));
+					string name = deviceInfo.UserDeviceName;
+					if (string.IsNullOrEmpty(name)) name = deviceInfo.ModelName;
+					AddDevice(new NamedRokuDevice(e.Device, name));
 				} catch (Exception) {
 					AddDevice(new NamedRokuDevice(e.Device, e.Location.ToString()));
 				}

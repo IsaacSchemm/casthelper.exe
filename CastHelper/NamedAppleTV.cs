@@ -18,10 +18,6 @@ namespace CastHelper {
 
 		public NamedAppleTV(string name, IPAddress ipAddress) : this(name, new Uri($"http://{ipAddress}:7000")) { }
 
-		public override string ToString() {
-			return Name;
-		}
-
 		public async Task PlayVideoAsync(string url) {
 			var req = WebRequest.CreateHttp(new Uri(Location, "/play"));
 			req.Method = "POST";
@@ -33,6 +29,10 @@ namespace CastHelper {
 			}
 			using (var resp = await req.GetResponseAsync())
 			using (var s = resp.GetResponseStream()) { }
+		}
+
+		public override string ToString() {
+			return $"{Name} ({Location.Host})";
 		}
 	}
 }
