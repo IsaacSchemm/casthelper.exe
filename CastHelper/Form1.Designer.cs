@@ -23,9 +23,6 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-            this.lblSearching = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.lblDevice = new System.Windows.Forms.Label();
             this.lblUrl = new System.Windows.Forms.Label();
@@ -35,40 +32,12 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel1.SuspendLayout();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblSearching = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblSearching
-            // 
-            this.lblSearching.AutoSize = true;
-            this.lblSearching.Location = new System.Drawing.Point(3, 0);
-            this.lblSearching.Name = "lblSearching";
-            this.lblSearching.Size = new System.Drawing.Size(119, 13);
-            this.lblSearching.TabIndex = 0;
-            this.lblSearching.Text = "Searching for devices...";
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(3, 16);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(304, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBar1.TabIndex = 1;
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.lblSearching);
-            this.panel1.Controls.Add(this.progressBar1);
-            this.panel1.Location = new System.Drawing.Point(12, 27);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(310, 68);
-            this.panel1.TabIndex = 4;
             // 
             // comboBox1
             // 
@@ -157,6 +126,37 @@
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(3, 16);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(304, 23);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar1.TabIndex = 1;
+            // 
+            // lblSearching
+            // 
+            this.lblSearching.AutoSize = true;
+            this.lblSearching.Location = new System.Drawing.Point(3, 0);
+            this.lblSearching.Name = "lblSearching";
+            this.lblSearching.Size = new System.Drawing.Size(119, 13);
+            this.lblSearching.TabIndex = 0;
+            this.lblSearching.Text = "Searching for devices...";
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.lblSearching);
+            this.panel1.Controls.Add(this.progressBar1);
+            this.panel1.Location = new System.Drawing.Point(12, 27);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(310, 68);
+            this.panel1.TabIndex = 4;
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnPlay;
@@ -176,20 +176,16 @@
             this.Name = "Form1";
             this.Text = "Cast Helper";
             this.Shown += new System.EventHandler(this.Form1_Shown);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.Label lblSearching;
-		private System.Windows.Forms.ProgressBar progressBar1;
-		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.ComboBox comboBox1;
 		private System.Windows.Forms.Label lblDevice;
 		private System.Windows.Forms.Label lblUrl;
@@ -199,6 +195,9 @@
 		private System.Windows.Forms.MenuStrip menuStrip1;
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+		private System.Windows.Forms.ProgressBar progressBar1;
+		private System.Windows.Forms.Label lblSearching;
+		private System.Windows.Forms.Panel panel1;
 	}
 }
 
