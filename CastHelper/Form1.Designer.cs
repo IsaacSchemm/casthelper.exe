@@ -32,7 +32,11 @@
             this.txtUrl = new System.Windows.Forms.TextBox();
             this.btnPlay = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblSearching
@@ -61,9 +65,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.lblSearching);
             this.panel1.Controls.Add(this.progressBar1);
-            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(310, 83);
+            this.panel1.Size = new System.Drawing.Size(310, 68);
             this.panel1.TabIndex = 4;
             // 
             // comboBox1
@@ -73,7 +77,7 @@
             this.comboBox1.DisplayMember = "Location";
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(62, 12);
+            this.comboBox1.Location = new System.Drawing.Point(62, 27);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(260, 21);
             this.comboBox1.TabIndex = 6;
@@ -81,7 +85,7 @@
             // lblDevice
             // 
             this.lblDevice.AutoSize = true;
-            this.lblDevice.Location = new System.Drawing.Point(12, 15);
+            this.lblDevice.Location = new System.Drawing.Point(12, 30);
             this.lblDevice.Name = "lblDevice";
             this.lblDevice.Size = new System.Drawing.Size(44, 13);
             this.lblDevice.TabIndex = 5;
@@ -90,7 +94,7 @@
             // lblUrl
             // 
             this.lblUrl.AutoSize = true;
-            this.lblUrl.Location = new System.Drawing.Point(12, 42);
+            this.lblUrl.Location = new System.Drawing.Point(12, 57);
             this.lblUrl.Name = "lblUrl";
             this.lblUrl.Size = new System.Drawing.Size(32, 13);
             this.lblUrl.TabIndex = 7;
@@ -100,7 +104,7 @@
             // 
             this.txtUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUrl.Location = new System.Drawing.Point(62, 39);
+            this.txtUrl.Location = new System.Drawing.Point(62, 54);
             this.txtUrl.Name = "txtUrl";
             this.txtUrl.Size = new System.Drawing.Size(260, 20);
             this.txtUrl.TabIndex = 8;
@@ -128,6 +132,31 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.helpToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(334, 24);
+            this.menuStrip1.TabIndex = 11;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "&Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "&About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnPlay;
@@ -142,11 +171,15 @@
             this.Controls.Add(this.lblUrl);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.lblDevice);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Cast Helper";
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -163,6 +196,9 @@
 		private System.Windows.Forms.TextBox txtUrl;
 		private System.Windows.Forms.Button btnPlay;
 		private System.Windows.Forms.Button btnCancel;
+		private System.Windows.Forms.MenuStrip menuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 	}
 }
 

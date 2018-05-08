@@ -64,8 +64,8 @@ namespace CastHelper {
 
 					var req = WebRequest.CreateHttp(uri);
 					req.Method = "HEAD";
-					req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*,image/*";
-					req.UserAgent = "casthelper.exe/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
+					req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*";
+					req.UserAgent = "CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
 					req.AllowAutoRedirect = false;
 					req.CookieContainer = _cookieContainer;
 					using (var resp = await req.GetResponseAsync())
@@ -125,7 +125,6 @@ namespace CastHelper {
 						break;
 					case "image":
 						throw new NotImplementedException("Showing images on Roku is not currently supported.");
-						break;
 				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
 				MessageBox.Show(this, "No media was found at the given URL - make sure that you have typed the URL correctly. For live streams, this may also mean that the stream has not yet started. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -151,6 +150,7 @@ namespace CastHelper {
 					try {
 						var req = WebRequest.CreateHttp(new Uri(device.Location, url));
 						req.Method = "POST";
+						req.UserAgent = "CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
 						using (var resp = await req.GetResponseAsync())
 						using (var s = resp.GetResponseStream()) { }
 					} catch (Exception ex) {
@@ -167,6 +167,20 @@ namespace CastHelper {
 
 		private void btnCancel_Click(object sender, EventArgs e) {
 			Close();
+		}
+		
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
+			MessageBox.Show(this, @"CastHelper 1.0
+Copyright © 2018 Isaac Schemm
+
+RokuDotNet
+Copyright © 2018 Phillip Hoff
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ""Software""), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 	}
 }
