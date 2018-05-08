@@ -1,4 +1,5 @@
-﻿using RokuDotNet.Client;
+﻿using Network.Bonjour;
+using RokuDotNet.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,25 +17,41 @@ namespace CastHelper {
 	public partial class Form1 : Form {
 		private readonly CookieContainer _cookieContainer;
 		private readonly RokuDeviceDiscoveryClient _discoveryClient;
+		private readonly BonjourServiceResolver _resolver;
 
 		public Form1() {
 			InitializeComponent();
 			_cookieContainer = new CookieContainer();
+
 			_discoveryClient = new RokuDeviceDiscoveryClient();
 			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(async () => {
 				try {
 					var deviceInfo = await e.Device.Query.GetDeviceInfoAsync();
-					comboBox1.Items.Add(new NamedRokuDevice(e.Device, deviceInfo.UserDeviceName));
+					AddDevice(new NamedRokuDevice(e.Device, deviceInfo.UserDeviceName));
 				} catch (Exception) {
-					comboBox1.Items.Add(new NamedRokuDevice(e.Device, e.Location.ToString()));
-				}
-				if (comboBox1.SelectedIndex == -1) {
-					comboBox1.SelectedIndex = 0;
-					txtUrl.Focus();
-					panel1.Visible = false;
-					btnPlay.Enabled = true;
+					AddDevice(new NamedRokuDevice(e.Device, e.Location.ToString()));
 				}
 			}));
+
+			_resolver = new BonjourServiceResolver();
+			_resolver.ServiceFound += service => {
+				var address = service.Addresses[0].Addresses.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+				if (address != null) {
+					BeginInvoke(new Action(() => AddDevice(address)));
+				}
+			};
+
+			_resolver.Resolve("_airplay._tcp.local.");
+		}
+
+		private void AddDevice(object device) {
+			comboBox1.Items.Add(device);
+			if (comboBox1.SelectedIndex == -1) {
+				comboBox1.SelectedIndex = 0;
+				txtUrl.Focus();
+				panel1.Visible = false;
+				btnPlay.Enabled = true;
+			}
 		}
 
 		private void Form1_Shown(object sender, EventArgs e) {

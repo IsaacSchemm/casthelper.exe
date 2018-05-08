@@ -33,9 +33,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Bonjour.NET">
+      <HintPath>AirSharp\AirSharpConsole\Dependencies\Bonjour.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="DnsResolver">
+      <HintPath>AirSharp\AirSharpConsole\Dependencies\DnsResolver.dll</HintPath>
+    </Reference>
+    <Reference Include="Network">
+      <HintPath>AirSharp\AirSharpConsole\Dependencies\Network.dll</HintPath>
+    </Reference>
+    <Reference Include="Services.NET">
+      <HintPath>AirSharp\AirSharpConsole\Dependencies\Services.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,8 +58,47 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AirSharp\AirSharpLib\AbstractMediaHandler.cs" />
+    <Compile Include="AirSharp\AirSharpLib\DefaultMediaHandler.cs" />
+    <Compile Include="AirSharp\AirSharpLib\ErrorEventArgs.cs" />
+    <Compile Include="AirSharp\AirSharpLib\IMediaHandler.cs" />
+    <Compile Include="AirSharp\AirSharpLib\MediaSettings.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\ByteArrayContent.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\ByteParser.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\ByteString.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\ConnectionReceivedEventArgs.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\ErrorEventArgs.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\Exceptions\HttpException.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HeaderCollection.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpContent.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpContext.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpHeaderConstants.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpListener.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpListenerBase.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpMessage.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpProcessor.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpRequest.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\HttpResponse.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\IHttpRequestHandler.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\ISession.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\ISocketListener.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\MediaType.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\Session.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\SocketListener.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\StreamContent.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\StringContent.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\TcpListenerBase.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Net\Utils.cs" />
+    <Compile Include="AirSharp\AirSharpLib\PlaybackInfo.cs" />
+    <Compile Include="AirSharp\AirSharpLib\PlaybackSettings.cs" />
+    <Compile Include="AirSharp\AirSharpLib\Player.cs" />
+    <Compile Include="AirSharp\AirSharpLib\ProgressEventArgs.cs" />
+    <Compile Include="AirSharp\AirSharpLib\PropertyList.cs" />
+    <Compile Include="AirSharp\AirSharpLib\StateChangedEventArgs.cs" />
+    <Compile Include="AirSharp\AirSharpLib\StateType.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

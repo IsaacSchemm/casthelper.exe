@@ -1,3 +1,6 @@
 [submodule "CastHelper/RokuDotNet"]
 	path = CastHelper/RokuDotNet
 	url = https://github.com/philliphoff/RokuDotNet
+[submodule "CastHelper/AirSharp"]
+	path = CastHelper/AirSharp
+	url = https://github.com/jpepiot/AirSharp
