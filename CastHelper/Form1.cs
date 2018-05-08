@@ -19,6 +19,15 @@ namespace CastHelper {
 		private readonly RokuDeviceDiscoveryClient _discoveryClient;
 		private readonly BonjourServiceResolver _resolver;
 
+		public string Url {
+			get {
+				return txtUrl.Text;
+			}
+			set {
+				txtUrl.Text = value;
+			}
+		}
+
 		public Form1() {
 			InitializeComponent();
 			_cookieContainer = new CookieContainer();
@@ -151,7 +160,7 @@ namespace CastHelper {
 					case MediaType.Image:
 						throw new NotImplementedException("CastHelper cannot cast photos to this device.");
 					case MediaType.Text:
-						MessageBox.Show(this, "This URL refers to a web page or document, not to a video, audio, or photo resource.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show(this, "This URL refers to a web page or document, not to a raw media file or stream.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						break;
 				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {

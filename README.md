@@ -5,7 +5,12 @@ send media URLs to a Roku or Apple TV on your local area network.
 
 Both Roku and Apple TV devices will detect the format of a video on their own,
 so any video format that the device supports should work. CastHelper also
-supports sending .mp3 and .m4a audio to Roku devices.
+supports sending .mp3 and .m4a audio to Roku devices. Photos are not currently
+supported on either device.
+
+You can pass a URL as a command-line argument to casthelper.exe to pre-fill
+the URL box. The media won't start automatically, because the user still needs
+to select a device.
 
 ## HTTP behavior
 
