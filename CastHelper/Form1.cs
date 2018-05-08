@@ -20,8 +20,13 @@ namespace CastHelper {
 			InitializeComponent();
 			_cookieContainer = new CookieContainer();
 			_discoveryClient = new RokuDeviceDiscoveryClient();
-			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => {
-				comboBox1.Items.Add(e.Device);
+			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(async () => {
+				try {
+					var deviceInfo = await e.Device.Query.GetDeviceInfoAsync();
+					comboBox1.Items.Add(new NamedRokuDevice(e.Device, deviceInfo.UserDeviceName));
+				} catch (Exception) {
+					comboBox1.Items.Add(new NamedRokuDevice(e.Device, e.Location.ToString()));
+				}
 				if (comboBox1.SelectedIndex == -1) {
 					comboBox1.SelectedIndex = 0;
 					txtUrl.Focus();
@@ -133,7 +138,7 @@ namespace CastHelper {
 			}
 			
 			if (url != null) {
-				var device = comboBox1.SelectedItem as RokuDevice;
+				var device = comboBox1.SelectedItem as NamedRokuDevice;
 				if (device == null) {
 					MessageBox.Show(this, "No Roku device is selected.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				} else {
