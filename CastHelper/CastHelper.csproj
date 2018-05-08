@@ -7,7 +7,7 @@
     <ProjectGuid>{CD490E58-181D-43C7-9018-4275D798A332}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>CastHelper</RootNamespace>
-    <AssemblyName>CastHelper</AssemblyName>
+    <AssemblyName>casthelper</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
