@@ -14,36 +14,26 @@ using System.Windows.Forms;
 namespace CastHelper {
 	public partial class Form1 : Form {
 		private readonly CookieContainer _cookieContainer;
+		private readonly RokuDeviceDiscoveryClient _discoveryClient;
 
 		public Form1() {
 			InitializeComponent();
 			_cookieContainer = new CookieContainer();
+			_discoveryClient = new RokuDeviceDiscoveryClient();
+			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => {
+				comboBox1.Items.Add(e.Device);
+				if (comboBox1.SelectedIndex == -1) {
+					comboBox1.SelectedIndex = 0;
+					txtUrl.Focus();
+					panel1.Visible = false;
+					btnPlay.Enabled = true;
+				}
+			}));
 		}
 
-		private async void Form1_Shown(object sender, EventArgs e) {
+		private void Form1_Shown(object sender, EventArgs e) {
 			btnPlay.Enabled = false;
-
-			var client = new RokuDeviceDiscoveryClient();
-			using (var tokenSource = new CancellationTokenSource()) {
-				var devices = new List<IRokuDevice>();
-				client.DeviceDiscovered += (a, b) => devices.Add(b.Device);
-				var task = client.DiscoverDevicesAsync(tokenSource.Token);
-				tokenSource.CancelAfter(3000);
-				try {
-					await task;
-				} catch (TaskCanceledException) { }
-				comboBox1.Items.AddRange(devices.ToArray());
-			}
-			panel1.Visible = false;
-
-			if (comboBox1.Items.Count == 0) {
-				MessageBox.Show(this, "Could not find any Roku devices on the local network.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			} else {
-				comboBox1.SelectedIndex = 0;
-				txtUrl.Focus();
-			}
-
-			btnPlay.Enabled = true;
+			_discoveryClient.DiscoverDevicesAsync();
 		}
 
 		private async void btnPlay_Click(object sender, EventArgs e) {
