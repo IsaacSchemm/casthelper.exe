@@ -35,17 +35,9 @@ namespace CastHelper {
 
 			_resolver = new BonjourServiceResolver();
 			_resolver.ServiceFound += service => {
-				var address = service.Addresses[0].Addresses.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+				var address = service.Addresses.SelectMany(a => a.Addresses).FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
 				if (address != null) {
 					BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.Name, address))));
-
-					//var req = WebRequest.CreateHttp("http://" + address + ":7000/server-info");
-					//req.UserAgent = "CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
-					//req.Headers["X-Apple-Session-ID"] = Guid.NewGuid().ToString();
-					//using (var resp = req.GetResponse())
-					//using (var sr = new System.IO.StreamReader(resp.GetResponseStream())) {
-					//	Console.WriteLine(sr.ReadToEnd());
-					//}
 				}
 			};
 		}
@@ -103,7 +95,7 @@ namespace CastHelper {
 					throw new Exception("This URL redirected too many times.");
 				}
 
-				MediaType? type = null;
+				MediaType type = MediaType.Unknown;
 				switch (contentType.Split('/').First()) {
 					case "audio":
 						type = MediaType.Audio;
@@ -118,7 +110,7 @@ namespace CastHelper {
 						type = MediaType.Image;
 						break;
 					case "text":
-						MessageBox.Show(this, "This URL refers to a web page or document, not to a video, audio, or photo resource.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						type = MediaType.Text;
 						break;
 					default:
 						if (contentType.StartsWith("application/vnd.apple.mpegurl")) {
@@ -127,23 +119,38 @@ namespace CastHelper {
 							type = MediaType.Video;
 						} else if (contentType.StartsWith("application/vnd.ms-sstr+xml")) {
 							type = MediaType.Video;
-						} else {
-							using (var f = new SelectTypeForm()) {
-								if (f.ShowDialog(this) == DialogResult.OK) {
-									type = f.SelectedType;
-								}
-							}
 						}
 						break;
 				}
-
-				if (type is MediaType t) {
-					var device = comboBox1.SelectedItem as INamedDevice;
-					if (device == null) {
-						MessageBox.Show(this, "No Roku device is selected.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					} else {
-						await device.PlayMediaAsync(txtUrl.Text, t, contentType);
+				
+				if (type == MediaType.Unknown) {
+					using (var f = new SelectTypeForm()) {
+						if (f.ShowDialog(this) == DialogResult.OK) {
+							type = f.SelectedType;
+						}
 					}
+				}
+
+				switch (type) {
+					case MediaType.Video:
+						var videoDevice = comboBox1.SelectedItem as IVideoDevice;
+						if (videoDevice == null) {
+							throw new NotImplementedException("CastHelper cannot cast video to this device.");
+						}
+						await videoDevice.PlayVideoAsync(txtUrl.Text);
+						break;
+					case MediaType.Audio:
+						var audioDevice = comboBox1.SelectedItem as IAudioDevice;
+						if (audioDevice == null) {
+							throw new NotImplementedException("CastHelper cannot cast audio to this device.");
+						}
+						await audioDevice.PlayAudioAsync(txtUrl.Text, contentType);
+						break;
+					case MediaType.Image:
+						throw new NotImplementedException("CastHelper cannot cast photos to this device.");
+					case MediaType.Text:
+						MessageBox.Show(this, "This URL refers to a web page or document, not to a video, audio, or photo resource.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						break;
 				}
 
 				//switch (type) {

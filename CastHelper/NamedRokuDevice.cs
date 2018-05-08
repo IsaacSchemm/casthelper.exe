@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CastHelper {
-	public class NamedRokuDevice : IRokuDevice, INamedDevice {
+	public class NamedRokuDevice : IRokuDevice, IVideoDevice, IAudioDevice {
 		private IRokuDevice _device;
 		public string Name { get; private set; }
 
@@ -23,25 +23,25 @@ namespace CastHelper {
 		public IRokuDeviceQuery Query => _device.Query;
 		public Uri Location => (_device as RokuDevice)?.Location;
 
-		public async Task PlayMediaAsync(string mediaUrl, MediaType type, string contentType) {
+		public async Task PlayVideoAsync(string mediaUrl) {
 			try {
-				string url = null;
-				switch (type) {
-					case MediaType.Audio:
-						string subtype = contentType.Split('/', ';', ',')[1];
-						if (subtype == "mpeg") subtype = "mp3";
-						url = $"/input/15985?t=a&u={WebUtility.UrlEncode(mediaUrl)}&songname=(null)&artistname=(null)&songformat={subtype}&albumarturl=(null)";
-						break;
-					case MediaType.Video:
-						url = $"/input/15985?t=v&u={WebUtility.UrlEncode(mediaUrl)}&k=(null)";
-						break;
-					case MediaType.Image:
-						throw new NotImplementedException("Showing images on Roku is not currently supported.");
-				}
-
-				var req = WebRequest.CreateHttp(new Uri(Location, url));
+				var req = WebRequest.CreateHttp(new Uri(Location, $"/input/15985?t=v&u={WebUtility.UrlEncode(mediaUrl)}&k=(null)"));
 				req.Method = "POST";
-				req.UserAgent = "CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
+				req.UserAgent = Program.UserAgent;
+				using (var resp = await req.GetResponseAsync())
+				using (var s = resp.GetResponseStream()) { }
+			} catch (Exception ex) {
+				throw new Exception("Could not send media to Roku.", ex);
+			}
+		}
+
+		public async Task PlayAudioAsync(string mediaUrl, string contentType) {
+			try {
+				string subtype = contentType.Split('/', ';', ',')[1];
+				if (subtype == "mpeg") subtype = "mp3";
+				var req = WebRequest.CreateHttp(new Uri(Location, $"/input/15985?t=a&u={WebUtility.UrlEncode(mediaUrl)}&songname=(null)&artistname=(null)&songformat={subtype}&albumarturl=(null)"));
+				req.Method = "POST";
+				req.UserAgent = Program.UserAgent;
 				using (var resp = await req.GetResponseAsync())
 				using (var s = resp.GetResponseStream()) { }
 			} catch (Exception ex) {

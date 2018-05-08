@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 
 namespace CastHelper {
 	public enum MediaType {
+		Unknown,
 		Video,
 		Audio,
-		Image
+		Image,
+		Text
 	}
 
-	public interface INamedDevice {
+	public interface IVideoDevice {
 		string Name { get; }
+		Task PlayVideoAsync(string url);
+	}
 
-		Task PlayMediaAsync(string url, MediaType type, string contentType);
+	public interface IAudioDevice {
+		string Name { get; }
+		Task PlayAudioAsync(string url, string contentType);
 	}
 }
