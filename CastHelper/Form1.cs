@@ -86,7 +86,7 @@ namespace CastHelper {
 					var req = WebRequest.CreateHttp(uri);
 					req.Method = "HEAD";
 					req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*";
-					req.UserAgent = "CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
+					req.UserAgent = Program.UserAgent;
 					req.AllowAutoRedirect = false;
 					req.CookieContainer = _cookieContainer;
 					using (var resp = await req.GetResponseAsync())

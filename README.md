@@ -26,7 +26,7 @@ DASH, or Smooth Streaming manifest.
 
 The request headers sent by CastHelper are:
 
-    User-Agent: CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)
+    User-Agent: CastHelper/1.1 (https://github.com/IsaacSchemm/casthelper.exe)
 	Accept: application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*
 
 (You can use these headers to redirect to raw video or audio content when you
