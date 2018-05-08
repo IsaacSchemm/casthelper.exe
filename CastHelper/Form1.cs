@@ -37,7 +37,15 @@ namespace CastHelper {
 			_resolver.ServiceFound += service => {
 				var address = service.Addresses[0].Addresses.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
 				if (address != null) {
-					BeginInvoke(new Action(() => AddDevice(address)));
+					BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.Name, address))));
+
+					//var req = WebRequest.CreateHttp("http://" + address + ":7000/server-info");
+					//req.UserAgent = "CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
+					//req.Headers["X-Apple-Session-ID"] = Guid.NewGuid().ToString();
+					//using (var resp = req.GetResponse())
+					//using (var sr = new System.IO.StreamReader(resp.GetResponseStream())) {
+					//	Console.WriteLine(sr.ReadToEnd());
+					//}
 				}
 			};
 
