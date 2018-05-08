@@ -26,13 +26,18 @@ namespace CastHelper {
 			var client = new RokuDeviceDiscoveryClient();
 			using (var tokenSource = new CancellationTokenSource()) {
 				var devices = new List<IRokuDevice>();
+
 				client.DeviceDiscovered += (a, b) => devices.Add(b.Device);
 				var task = client.DiscoverDevicesAsync(tokenSource.Token);
 				tokenSource.CancelAfter(3000);
 				try {
 					await task;
 				} catch (TaskCanceledException) { }
-				comboBox1.Items.AddRange(devices.ToArray());
+
+				comboBox1.Items.AddRange(await Task.WhenAll(devices.Select(async d => {
+					var deviceInfo = await d.Query.GetDeviceInfoAsync();
+					return new NamedRokuDevice(d, deviceInfo.UserDeviceName);
+				})));
 			}
 			panel1.Visible = false;
 
@@ -143,7 +148,7 @@ namespace CastHelper {
 			}
 			
 			if (url != null) {
-				var device = comboBox1.SelectedItem as RokuDevice;
+				var device = comboBox1.SelectedItem as NamedRokuDevice;
 				if (device == null) {
 					MessageBox.Show(this, "No Roku device is selected.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				} else {
