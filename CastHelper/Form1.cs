@@ -154,19 +154,6 @@ namespace CastHelper {
 						MessageBox.Show(this, "This URL refers to a web page or document, not to a video, audio, or photo resource.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						break;
 				}
-
-				//switch (type) {
-				//	case MediaType.Audio:
-				//		string subtype = contentType.Split('/', ';', ',')[1];
-				//		if (subtype == "mpeg") subtype = "mp3";
-				//		url = $"/input/15985?t=a&u={WebUtility.UrlEncode(txtUrl.Text)}&songname=(null)&artistname=(null)&songformat={subtype}&albumarturl=(null)";
-				//		break;
-				//	case MediaType.Video:
-				//		url = $"/input/15985?t=v&u={WebUtility.UrlEncode(txtUrl.Text)}&k=(null)";
-				//		break;
-				//	case MediaType.Image:
-				//		throw new NotImplementedException("Showing images on Roku is not currently supported.");
-				//}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
 				MessageBox.Show(this, "No media was found at the given URL - make sure that you have typed the URL correctly. For live streams, this may also mean that the stream has not yet started. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.Gone) {
@@ -182,24 +169,6 @@ namespace CastHelper {
 				Console.Error.WriteLine(ex);
 				MessageBox.Show(this, "An unknown error occurred.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
-			
-			//if (url != null) {
-			//	var device = comboBox1.SelectedItem as NamedRokuDevice;
-			//	if (device == null) {
-			//		MessageBox.Show(this, "No Roku device is selected.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			//	} else {
-			//		try {
-			//			var req = WebRequest.CreateHttp(new Uri(device.Location, url));
-			//			req.Method = "POST";
-			//			req.UserAgent = "CastHelper/1.0 (https://github.com/IsaacSchemm/casthelper.exe)";
-			//			using (var resp = await req.GetResponseAsync())
-			//			using (var s = resp.GetResponseStream()) { }
-			//		} catch (Exception ex) {
-			//			Console.Error.WriteLine(ex);
-			//			MessageBox.Show(this, "Could not send media to Roku.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			//		}
-			//	}
-			//}
 
 			comboBox1.Enabled = true;
 			txtUrl.Enabled = true;

@@ -137,6 +137,12 @@
     <Compile Include="SelectTypeForm.Designer.cs">
       <DependentUpon>SelectTypeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AppleTVPlaybackForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AppleTVPlaybackForm.Designer.cs">
+      <DependentUpon>AppleTVPlaybackForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -152,6 +158,9 @@
     </Compile>
     <EmbeddedResource Include="SelectTypeForm.resx">
       <DependentUpon>SelectTypeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AppleTVPlaybackForm.resx">
+      <DependentUpon>AppleTVPlaybackForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
