@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CastHelper {
 	public class EdgeDevice : IVideoDevice, IAudioDevice {
@@ -13,9 +14,18 @@ namespace CastHelper {
 			return PlayVideoAsync(url);
 		}
 
-		public Task PlayVideoAsync(string url) {
+		public async Task PlayVideoAsync(string url) {
 			Process.Start("microsoft-edge:" + url);
-			return Task.CompletedTask;
+
+			using (var f = new Form()) {
+				f.Controls.Add(new Label {
+					Text = "Testing (will close in 3 seconds)",
+					Dock = DockStyle.Fill
+				});
+				f.Show();
+				await Task.Delay(3000);
+				f.Close();
+			}
 		}
 
 		public override string ToString() {

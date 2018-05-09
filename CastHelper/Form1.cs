@@ -154,14 +154,18 @@ namespace CastHelper {
 						if (videoDevice == null) {
 							throw new NotImplementedException("CastHelper cannot cast video to this device.");
 						}
+						Hide();
 						await videoDevice.PlayVideoAsync(txtUrl.Text);
+						Close();
 						break;
 					case MediaType.Audio:
 						var audioDevice = comboBox1.SelectedItem as IAudioDevice;
 						if (audioDevice == null) {
 							throw new NotImplementedException("CastHelper cannot cast audio to this device.");
 						}
+						Hide();
 						await audioDevice.PlayAudioAsync(txtUrl.Text, contentType);
+						Close();
 						break;
 					case MediaType.Image:
 						throw new NotImplementedException("CastHelper cannot cast photos to this device.");
