@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CastHelper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A small WinForms (.NET) app for sending video URLs to Roku and Apple TV devices")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("WIN")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CastHelper")]
-[assembly: AssemblyCopyright("Copyright © WIN 2018")]
+[assembly: AssemblyCopyright("Copyright © 2018 Isaac Schemm")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
