@@ -67,6 +67,12 @@ namespace CastHelper {
 					BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.DisplayName, address))));
 				}
 			});
+
+#if DEBUG
+			Task.Delay(5000).ContinueWith(t => {
+				BeginInvoke(new Action(() => AddDevice(new EdgeDevice())));
+			});
+#endif
 		}
 
 		private async void btnPlay_Click(object sender, EventArgs e) {
