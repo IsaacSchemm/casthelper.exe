@@ -215,7 +215,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Zeroconf, which is included for Apple TV discovery, is available under the Microsoft Public License.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+Zeroconf and System.Reactive, which are included for Apple TV discovery, are available under the Microsoft Public License and the Apache License 2.0, respectively.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// <summary>

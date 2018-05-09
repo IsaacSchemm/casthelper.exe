@@ -34,7 +34,7 @@ namespace CastHelper {
 			// Apple TV initiates a reverse HTTP connection, but instead of listening to it, we'll just do this
 			using (var f = new AppleTVPlaybackForm())
 			using (Timer timer = new Timer(1000)) {
-				f.LabelText = $"Curerntly playing video on {Name}. Closing this window will stop playback.";
+				f.LabelText = $"Currently playing video on {Name}. Closing this window will stop playback.";
 				timer.Elapsed += async (o, e) => {
 					try {
 						var req = WebRequest.CreateHttp(new Uri(Location, "/scrub"));
