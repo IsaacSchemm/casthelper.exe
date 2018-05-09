@@ -197,7 +197,11 @@ namespace CastHelper {
 		private void btnCancel_Click(object sender, EventArgs e) {
 			Close();
 		}
-		
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+			Close();
+		}
+
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
 			MessageBox.Show(this, @"CastHelper 1.1
 Copyright © 2018 Isaac Schemm
