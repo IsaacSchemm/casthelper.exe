@@ -54,6 +54,7 @@ namespace CastHelper {
 
 							f.BeginInvoke(new Action(() => {
 								if (duration == 0 && position == 0) {
+									f.OkToClose = true;
 									f.Close();
 								} else {
 									f.DurationSec = Math.Max((int)duration, f.PositionSec);

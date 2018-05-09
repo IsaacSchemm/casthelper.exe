@@ -80,6 +80,7 @@
             this.Controls.Add(this.label1);
             this.Name = "AppleTVPlaybackForm";
             this.Text = "Cast Helper";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AppleTVPlaybackForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
