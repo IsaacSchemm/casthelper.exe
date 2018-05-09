@@ -1,5 +1,4 @@
-﻿using Network.Bonjour;
-using RokuDotNet.Client;
+﻿using RokuDotNet.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +16,8 @@ namespace CastHelper {
 	public partial class Form1 : Form {
 		private readonly CookieContainer _cookieContainer;
 		private readonly RokuDeviceDiscoveryClient _discoveryClient;
-		private readonly BonjourServiceResolver _resolver;
+		private IObservable<Zeroconf.IZeroconfHost> _appleTvResolver;
+		private IDisposable _appleTvListener;
 
 		public string Url {
 			get {
@@ -43,14 +43,6 @@ namespace CastHelper {
 					AddDevice(new NamedRokuDevice(e.Device, e.Location.ToString()));
 				}
 			}));
-
-			_resolver = new BonjourServiceResolver();
-			_resolver.ServiceFound += service => {
-				var address = service.Addresses.SelectMany(a => a.Addresses).FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-				if (address != null) {
-					BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.Name, address))));
-				}
-			};
 		}
 
 		private void AddDevice(object device) {
@@ -66,7 +58,14 @@ namespace CastHelper {
 		private void Form1_Shown(object sender, EventArgs e) {
 			btnPlay.Enabled = false;
 			_discoveryClient.DiscoverDevicesAsync();
-			_resolver.Resolve("_airplay._tcp.local.");
+
+			_appleTvResolver = Zeroconf.ZeroconfResolver.ResolveContinuous("_airplay._tcp.local.");
+			_appleTvListener = _appleTvResolver.Subscribe(service => {
+				var address = service.IPAddresses.Select(a => IPAddress.Parse(a)).FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+				if (address != null) {
+					BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.DisplayName, address))));
+				}
+			});
 		}
 
 		private async void btnPlay_Click(object sender, EventArgs e) {
@@ -201,7 +200,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Additional libraries included for Apple TV support: Bonjour.NET.dll, DnsResolver.dll, Network.dll, Services.NET.dll", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+Zeroconf, which is included for Apple TV discovery, is available under the Microsoft Public License.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 	}
 }
