@@ -11,12 +11,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Zeroconf;
 
 namespace CastHelper {
 	public partial class Form1 : Form {
 		private readonly CookieContainer _cookieContainer;
 		private readonly RokuDeviceDiscoveryClient _discoveryClient;
-		private IObservable<Zeroconf.IZeroconfHost> _appleTvResolver;
+		private IObservable<IZeroconfHost> _appleTvResolver;
 		private IDisposable _appleTvListener;
 
 		public string Url {
@@ -59,7 +60,7 @@ namespace CastHelper {
 			btnPlay.Enabled = false;
 			_discoveryClient.DiscoverDevicesAsync();
 
-			_appleTvResolver = Zeroconf.ZeroconfResolver.ResolveContinuous("_airplay._tcp.local.");
+			_appleTvResolver = ZeroconfResolver.ResolveContinuous("_airplay._tcp.local.");
 			_appleTvListener = _appleTvResolver.Subscribe(service => {
 				var address = service.IPAddresses.Select(a => IPAddress.Parse(a)).FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
 				if (address != null) {
@@ -201,6 +202,18 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Zeroconf, which is included for Apple TV discovery, is available under the Microsoft Public License.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing) {
+			if (disposing) {
+				components?.Dispose();
+				_appleTvListener?.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 	}
 }
