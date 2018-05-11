@@ -16,16 +16,6 @@ namespace CastHelper {
 
 		public async Task PlayVideoAsync(string url) {
 			Process.Start("microsoft-edge:" + url);
-
-			using (var f = new Form()) {
-				f.Controls.Add(new Label {
-					Text = "Testing (will close in 3 seconds)",
-					Dock = DockStyle.Fill
-				});
-				f.Show();
-				await Task.Delay(3000);
-				f.Close();
-			}
 		}
 
 		public override string ToString() {

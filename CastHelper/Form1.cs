@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -86,19 +88,30 @@ namespace CastHelper {
 
 				for (int i = 0; i < 50; i++) {
 					Uri uri = Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out Uri tmp1) ? tmp1
-						: Uri.TryCreate("http://" + txtUrl.Text, UriKind.Absolute, out Uri tmp2) ? tmp2
-							: throw new FormatException("You must enter a valid URL.");
+							: Uri.TryCreate("http://" + txtUrl.Text, UriKind.Absolute, out Uri tmp2) ? tmp2
+								: throw new FormatException("You must enter a valid URL.");
 
 					var req = WebRequest.CreateHttp(uri);
 					req.Method = "HEAD";
-					req.Accept = "application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*";
+					req.Accept = Program.Accept;
 					req.UserAgent = Program.UserAgent;
 					req.AllowAutoRedirect = false;
 					req.CookieContainer = _cookieContainer;
 					using (var resp = await req.GetResponseAsync())
 					using (var s = resp.GetResponseStream()) {
 						int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
-						if (code / 100 == 3) {
+						if (code == 300 && new[] {
+							"text/html",
+							"application/xml+xhtml"
+						}.Any(x => resp.ContentType.StartsWith(x))) {
+							string newUrl = await HandleHttp300Html(req.RequestUri);
+							if (newUrl != null) {
+								txtUrl.Text = newUrl;
+							} else {
+								contentType = null;
+								break;
+							}
+						} else if (code / 100 == 3) {
 							// redirect
 							txtUrl.Text = new Uri(uri, resp.Headers["Location"]).AbsoluteUri;
 						} else {
@@ -107,71 +120,69 @@ namespace CastHelper {
 						}
 					}
 				}
+			
+				if (contentType != null) {
+					MediaType type = MediaType.Unknown;
+					switch (contentType.Split('/').First()) {
+						case "audio":
+							type = MediaType.Audio;
+							if (contentType == "audio/x-mpegurl") {
+								type = MediaType.Video;
+							}
+							break;
+						case "video":
+							type = MediaType.Video;
+							break;
+						case "image":
+							type = MediaType.Image;
+							break;
+						case "text":
+							type = MediaType.Text;
+							break;
+						default:
+							if (contentType.StartsWith("application/vnd.apple.mpegurl")) {
+								type = MediaType.Video;
+							} else if (contentType.StartsWith("application/dash+xml")) {
+								type = MediaType.Video;
+							} else if (contentType.StartsWith("application/vnd.ms-sstr+xml")) {
+								type = MediaType.Video;
+							}
+							break;
+					}
 
-				if (contentType == null) {
-					throw new Exception("This URL redirected too many times.");
-				}
-
-				MediaType type = MediaType.Unknown;
-				switch (contentType.Split('/').First()) {
-					case "audio":
-						type = MediaType.Audio;
-						if (contentType == "audio/x-mpegurl") {
-							type = MediaType.Video;
-						}
-						break;
-					case "video":
-						type = MediaType.Video;
-						break;
-					case "image":
-						type = MediaType.Image;
-						break;
-					case "text":
-						type = MediaType.Text;
-						break;
-					default:
-						if (contentType.StartsWith("application/vnd.apple.mpegurl")) {
-							type = MediaType.Video;
-						} else if (contentType.StartsWith("application/dash+xml")) {
-							type = MediaType.Video;
-						} else if (contentType.StartsWith("application/vnd.ms-sstr+xml")) {
-							type = MediaType.Video;
-						}
-						break;
-				}
-				
-				if (type == MediaType.Unknown) {
-					using (var f = new SelectTypeForm()) {
-						if (f.ShowDialog(this) == DialogResult.OK) {
-							type = f.SelectedType;
+					if (type == MediaType.Unknown) {
+						using (var f = new SelectTypeForm()) {
+							if (f.ShowDialog(this) == DialogResult.OK) {
+								type = f.SelectedType;
+							}
 						}
 					}
-				}
 
-				switch (type) {
-					case MediaType.Video:
-						var videoDevice = comboBox1.SelectedItem as IVideoDevice;
-						if (videoDevice == null) {
-							throw new NotImplementedException("CastHelper cannot cast video to this device.");
-						}
-						Hide();
-						await videoDevice.PlayVideoAsync(txtUrl.Text);
-						Close();
-						break;
-					case MediaType.Audio:
-						var audioDevice = comboBox1.SelectedItem as IAudioDevice;
-						if (audioDevice == null) {
-							throw new NotImplementedException("CastHelper cannot cast audio to this device.");
-						}
-						Hide();
-						await audioDevice.PlayAudioAsync(txtUrl.Text, contentType);
-						Close();
-						break;
-					case MediaType.Image:
-						throw new NotImplementedException("CastHelper cannot cast photos to this device.");
-					case MediaType.Text:
-						MessageBox.Show(this, "This URL refers to a web page or document, not to a raw media file or stream.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-						break;
+					switch (type) {
+						case MediaType.Video:
+							var videoDevice = comboBox1.SelectedItem as IVideoDevice;
+							if (videoDevice == null) {
+								throw new NotImplementedException("CastHelper cannot cast video to this device.");
+							}
+							Hide();
+							await videoDevice.PlayVideoAsync(txtUrl.Text);
+							Close();
+							break;
+						case MediaType.Audio:
+							var audioDevice = comboBox1.SelectedItem as IAudioDevice;
+							if (audioDevice == null) {
+								throw new NotImplementedException("CastHelper cannot cast audio to this device.");
+							}
+							Hide();
+							await audioDevice.PlayAudioAsync(txtUrl.Text, contentType);
+							Close();
+							break;
+						case MediaType.Image:
+							throw new NotImplementedException("CastHelper cannot cast photos to this device.");
+						case MediaType.Text:
+							MessageBox.Show(this, "This URL refers to a web page or document, not to a raw media file or stream.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+							break;
+					}
 				}
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
 				MessageBox.Show(this, "No media was found at the given URL - make sure that you have typed the URL correctly. For live streams, this may also mean that the stream has not yet started. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -194,6 +205,48 @@ namespace CastHelper {
 			comboBox1.Enabled = true;
 			txtUrl.Enabled = true;
 			btnPlay.Enabled = true;
+		}
+
+		private async Task<string> HandleHttp300Html(Uri uri) {
+			// Retrieve and display the HTML content.
+			var req = WebRequest.CreateHttp(uri);
+			req.Method = "GET";
+			req.Accept = Program.Accept;
+			req.UserAgent = Program.UserAgent;
+			req.AllowAutoRedirect = false;
+			req.CookieContainer = _cookieContainer;
+			using (var resp = await req.GetResponseAsync())
+			using (var sr = new StreamReader(resp.GetResponseStream()))
+			using (var f = new Form {
+				Width = 500,
+				Height = 400
+			}) using (var w = new WebBrowser {
+				Dock = DockStyle.Fill,
+				ScriptErrorsSuppressed = true
+			}) {
+				string html = await sr.ReadToEndAsync();
+				html = new Regex("</head>", RegexOptions.IgnoreCase).Replace(
+					html,
+					$"<base href='{req.RequestUri}' /></head>");
+
+				f.Controls.Add(w);
+				f.Load += async (o, ea) => {
+					w.Navigate("about:blank");
+					while (w.Document?.Body == null) await Task.Delay(250);
+					w.DocumentText = html;
+				};
+				string url = null;
+				w.Navigating += (o, ea) => {
+					if (ea.Url.AbsoluteUri != "about:blank") {
+						url = ea.Url.AbsoluteUri;
+						f.DialogResult = DialogResult.OK;
+						f.Close();
+					}
+				};
+				return f.ShowDialog(this) == DialogResult.OK
+					? url
+					: null;
+			}
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e) {
