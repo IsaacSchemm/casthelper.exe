@@ -22,6 +22,12 @@ given URL to determine the type of the data. If it encounters a redirect, it
 will follow the Location header and update the URL text box accordingly.
 Cast Helper will also remember cookies (as long as it is running).
 
+Cast Helper 1.2 and up will handle HTTP 300 responses with text/html bodies by
+showing the HTML to the user in a new window and waiting for them to click one
+of the links. This uses the Windows embedded web browser, which runs in IE 7
+mode by default (you might be able to change this by using a X-UA-Compatible
+meta tag.)
+
 HTTP errors will result in an error message. There are unique error messages
 for HTTP 404 Not Found and HTTP 410 Gone. The user will also get an error when
 the content type does not begin with `audio/` or `video/` and is not an HLS,
