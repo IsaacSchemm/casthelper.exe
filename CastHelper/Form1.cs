@@ -77,6 +77,43 @@ namespace CastHelper {
 #endif
 		}
 
+		private async Task<string> FollowRedirectsToContentTypeAsync() {
+			for (int i = 0; i < 50; i++) {
+				Uri uri = Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out Uri tmp1) ? tmp1
+						: Uri.TryCreate("http://" + txtUrl.Text, UriKind.Absolute, out Uri tmp2) ? tmp2
+							: throw new FormatException("You must enter a valid URL.");
+
+				var req = WebRequest.CreateHttp(uri);
+				req.Method = "HEAD";
+				req.Accept = Program.Accept;
+				req.UserAgent = Program.UserAgent;
+				req.AllowAutoRedirect = false;
+				req.CookieContainer = _cookieContainer;
+				using (var resp = await req.GetResponseAsync())
+				using (var s = resp.GetResponseStream()) {
+					int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
+					if (code == 300 && new[] {
+						"text/html",
+						"application/xml+xhtml"
+					}.Any(x => resp.ContentType.StartsWith(x))) {
+						string newUrl = await HandleHttp300Html(req.RequestUri);
+						if (newUrl != null) {
+							txtUrl.Text = newUrl;
+						} else {
+							return null;
+						}
+					} else if (code / 100 == 3) {
+						// redirect
+						txtUrl.Text = new Uri(uri, resp.Headers["Location"]).AbsoluteUri;
+					} else {
+						return resp.ContentType;
+					}
+				}
+			}
+
+			throw new Exception("Too many redirects");
+		}
+
 		private async void btnPlay_Click(object sender, EventArgs e) {
 			comboBox1.Enabled = false;
 			txtUrl.Enabled = false;
@@ -84,43 +121,8 @@ namespace CastHelper {
 			
 			try {
 				// Get type of media
-				string contentType = null;
-
-				for (int i = 0; i < 50; i++) {
-					Uri uri = Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out Uri tmp1) ? tmp1
-							: Uri.TryCreate("http://" + txtUrl.Text, UriKind.Absolute, out Uri tmp2) ? tmp2
-								: throw new FormatException("You must enter a valid URL.");
-
-					var req = WebRequest.CreateHttp(uri);
-					req.Method = "HEAD";
-					req.Accept = Program.Accept;
-					req.UserAgent = Program.UserAgent;
-					req.AllowAutoRedirect = false;
-					req.CookieContainer = _cookieContainer;
-					using (var resp = await req.GetResponseAsync())
-					using (var s = resp.GetResponseStream()) {
-						int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
-						if (code == 300 && new[] {
-							"text/html",
-							"application/xml+xhtml"
-						}.Any(x => resp.ContentType.StartsWith(x))) {
-							string newUrl = await HandleHttp300Html(req.RequestUri);
-							if (newUrl != null) {
-								txtUrl.Text = newUrl;
-							} else {
-								contentType = null;
-								break;
-							}
-						} else if (code / 100 == 3) {
-							// redirect
-							txtUrl.Text = new Uri(uri, resp.Headers["Location"]).AbsoluteUri;
-						} else {
-							contentType = resp.ContentType;
-							break;
-						}
-					}
-				}
-			
+				string contentType = await FollowRedirectsToContentTypeAsync();
+				
 				if (contentType != null) {
 					MediaType type = MediaType.Unknown;
 					switch (contentType.Split('/').First()) {
@@ -206,7 +208,7 @@ namespace CastHelper {
 			txtUrl.Enabled = true;
 			btnPlay.Enabled = true;
 		}
-
+		
 		private async Task<string> HandleHttp300Html(Uri uri) {
 			// Retrieve and display the HTML content.
 			var req = WebRequest.CreateHttp(uri);
