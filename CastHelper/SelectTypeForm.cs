@@ -9,14 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CastHelper {
-	public partial class SelectTypeForm : Form {
-		public MediaType SelectedType => (MediaType)comboBox1.SelectedItem;
+	public partial class SelectTypeForm<T> : Form {
+		public T SelectedItem => (T)comboBox1.SelectedItem;
 
-		public SelectTypeForm() {
+		public SelectTypeForm(string label, IEnumerable<T> items) {
 			InitializeComponent();
+			label1.Text = label;
 			comboBox1.Items.Clear();
-			foreach (var t in Enum.GetValues(typeof(MediaType))) {
-				comboBox1.Items.Add((MediaType)t);
+			foreach (var i in items) {
+				comboBox1.Items.Add(i);
 			}
 			if (comboBox1.SelectedIndex == -1) comboBox1.SelectedIndex = 0;
 		}

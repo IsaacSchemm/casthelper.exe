@@ -76,7 +76,7 @@ namespace CastHelper {
 			});
 #endif
 		}
-
+		
 		private async Task<string> FollowRedirectsToContentTypeAsync() {
 			for (int i = 0; i < 50; i++) {
 				Uri uri = Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out Uri tmp1) ? tmp1
@@ -153,9 +153,9 @@ namespace CastHelper {
 					}
 
 					if (type == MediaType.Unknown) {
-						using (var f = new SelectTypeForm()) {
+						using (var f = new SelectTypeForm<MediaType>("Could not detect media type. Please select a type below:", (MediaType[])Enum.GetValues(typeof(MediaType)))) {
 							if (f.ShowDialog(this) == DialogResult.OK) {
-								type = f.SelectedType;
+								type = f.SelectedItem;
 							}
 						}
 					}

@@ -1,5 +1,5 @@
 ﻿namespace CastHelper {
-	partial class SelectTypeForm {
+	partial class SelectTypeForm<T> {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -34,9 +34,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(274, 13);
+            this.label1.Size = new System.Drawing.Size(118, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Could not detect media type. Please select a type below:";
+            this.label1.Text = "Select an option below:";
             // 
             // comboBox1
             // 
@@ -69,7 +69,7 @@
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
             // 
-            // SelectTypeForm
+            // SelectForm
             // 
             this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -80,8 +80,8 @@
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label1);
-            this.Name = "SelectTypeForm";
-            this.Text = "Select type";
+            this.Name = "SelectForm";
+            this.Text = "Cast Helper";
             this.ResumeLayout(false);
             this.PerformLayout();
 
