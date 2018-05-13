@@ -96,7 +96,7 @@ namespace CastHelper {
 						"text/html",
 						"application/xml+xhtml"
 					}.Any(x => resp.ContentType.StartsWith(x))) {
-						string newUrl = await VideoUrlFinder.GetVideoUriFromUriAsync(req.RequestUri);
+						string newUrl = await VideoUrlFinder.GetVideoUriFromUriAsync(req.RequestUri, _cookieContainer);
 						if (newUrl != null) {
 							txtUrl.Text = newUrl;
 						} else {
@@ -106,7 +106,7 @@ namespace CastHelper {
 						"text/html",
 						"application/xml+xhtml"
 					}.Any(x => resp.ContentType.StartsWith(x))) {
-						string newUrl = await HandleHttp300Html(req.RequestUri);
+						string newUrl = await Disambiguation.DisambiguateAsync(req.RequestUri, _cookieContainer);
 						if (newUrl != null) {
 							txtUrl.Text = newUrl;
 						} else {
@@ -217,48 +217,6 @@ namespace CastHelper {
 			comboBox1.Enabled = true;
 			txtUrl.Enabled = true;
 			btnPlay.Enabled = true;
-		}
-
-		private async Task<string> HandleHttp300Html(Uri uri) {
-			// Retrieve and display the HTML content.
-			var req = WebRequest.CreateHttp(uri);
-			req.Method = "GET";
-			req.Accept = Program.Accept;
-			req.UserAgent = Program.UserAgent;
-			req.AllowAutoRedirect = false;
-			req.CookieContainer = _cookieContainer;
-			using (var resp = await req.GetResponseAsync())
-			using (var sr = new StreamReader(resp.GetResponseStream()))
-			using (var f = new Form {
-				Width = 500,
-				Height = 400
-			}) using (var w = new WebBrowser {
-				Dock = DockStyle.Fill,
-				ScriptErrorsSuppressed = true
-			}) {
-				string html = await sr.ReadToEndAsync();
-				html = new Regex("</head>", RegexOptions.IgnoreCase).Replace(
-					html,
-					$"<base href='{req.RequestUri}' /></head>");
-
-				f.Controls.Add(w);
-				f.Load += async (o, ea) => {
-					w.Navigate("about:blank");
-					while (w.Document?.Body == null) await Task.Delay(250);
-					w.DocumentText = html;
-				};
-				string url = null;
-				w.Navigating += (o, ea) => {
-					if (ea.Url.AbsoluteUri != "about:blank") {
-						url = ea.Url.AbsoluteUri;
-						f.DialogResult = DialogResult.OK;
-						f.Close();
-					}
-				};
-				return f.ShowDialog(this) == DialogResult.OK
-					? url
-					: null;
-			}
 		}
 		
 		private void btnCancel_Click(object sender, EventArgs e) {
