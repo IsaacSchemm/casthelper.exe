@@ -36,16 +36,18 @@ namespace CastHelper {
 			_cookieContainer = new CookieContainer();
 
 			_discoveryClient = new RokuDeviceDiscoveryClient();
-			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(async () => {
-				try {
-					var deviceInfo = await e.Device.Query.GetDeviceInfoAsync();
-					string name = deviceInfo.UserDeviceName;
-					if (string.IsNullOrEmpty(name)) name = deviceInfo.ModelName;
-					AddDevice(new NamedRokuDevice(e.Device, name));
-				} catch (Exception) {
-					AddDevice(new NamedRokuDevice(e.Device, e.Location.ToString()));
-				}
-			}));
+			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => AddRoku(e.Device)));
+		}
+
+		private async void AddRoku(IRokuDevice device) {
+			try {
+				var deviceInfo = await device.Query.GetDeviceInfoAsync();
+				string name = deviceInfo.UserDeviceName;
+				if (string.IsNullOrEmpty(name)) name = deviceInfo.ModelName;
+				AddDevice(new NamedRokuDevice(device, name));
+			} catch (Exception) {
+				AddDevice(new NamedRokuDevice(device, device.Id));
+			}
 		}
 
 		private void AddDevice(object device) {
@@ -253,6 +255,21 @@ Zeroconf and System.Reactive, which are included for Apple TV discovery, are ava
 				_appleTvListener?.Dispose();
 			}
 			base.Dispose(disposing);
+		}
+
+		private void rescanToolStripMenuItem_Click_1(object sender, EventArgs e) {
+			_discoveryClient.DiscoverDevicesAsync();
+		}
+
+		private void manuallyEnterIPAddressToolStripMenuItem_Click_1(object sender, EventArgs e) {
+			using (var f = new InputBox()) {
+				f.Text = "Add Roku";
+				string ip = f.ShowDialog(this) == DialogResult.OK ? f.InputText : null;
+				if (!string.IsNullOrEmpty(ip) && IPAddress.TryParse(ip, out IPAddress addr)) {
+					var device = new RokuDevice(new Uri($"http://{ip}:8060/"), $"roku.custom.{ip}");
+					AddRoku(device);
+				}
+			}
 		}
 	}
 }
