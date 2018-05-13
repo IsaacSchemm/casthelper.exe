@@ -40,6 +40,8 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(16, 29);
@@ -69,7 +71,7 @@
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
             // 
-            // SelectForm
+            // SelectTypeForm
             // 
             this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -80,7 +82,7 @@
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label1);
-            this.Name = "SelectForm";
+            this.Name = "SelectTypeForm";
             this.Text = "Cast Helper";
             this.ResumeLayout(false);
             this.PerformLayout();

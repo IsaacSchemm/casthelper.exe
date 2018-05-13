@@ -14,8 +14,9 @@ namespace CastHelper {
 			return PlayVideoAsync(url);
 		}
 
-		public async Task PlayVideoAsync(string url) {
+		public Task PlayVideoAsync(string url) {
 			Process.Start("microsoft-edge:" + url);
+			return Task.CompletedTask;
 		}
 
 		public override string ToString() {

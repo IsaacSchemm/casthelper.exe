@@ -92,7 +92,17 @@ namespace CastHelper {
 				using (var resp = await req.GetResponseAsync())
 				using (var s = resp.GetResponseStream()) {
 					int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
-					if (code == 300 && new[] {
+					if (code == 200 && new[] {
+						"text/html",
+						"application/xml+xhtml"
+					}.Any(x => resp.ContentType.StartsWith(x))) {
+						string newUrl = await VideoUrlFinder.GetVideoUriFromUriAsync(req.RequestUri);
+						if (newUrl != null) {
+							txtUrl.Text = newUrl;
+						} else {
+							return resp.ContentType;
+						}
+					} else if (code == 300 && new[] {
 						"text/html",
 						"application/xml+xhtml"
 					}.Any(x => resp.ContentType.StartsWith(x))) {
@@ -189,7 +199,7 @@ namespace CastHelper {
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
 				MessageBox.Show(this, "No media was found at the given URL - make sure that you have typed the URL correctly. For live streams, this may also mean that the stream has not yet started. (HTTP 404)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotAcceptable) {
-				MessageBox.Show(this, "This media is not available in a format that Cast Helper supports. (HTTP 406)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(this, "This URL is not available in a format that Cast Helper supports. (HTTP 406)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.Gone) {
 				MessageBox.Show(this, "This URL no longer exists. You might need to obtain a new URL. (HTTP 410)", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode != null) {
@@ -208,7 +218,7 @@ namespace CastHelper {
 			txtUrl.Enabled = true;
 			btnPlay.Enabled = true;
 		}
-		
+
 		private async Task<string> HandleHttp300Html(Uri uri) {
 			// Retrieve and display the HTML content.
 			var req = WebRequest.CreateHttp(uri);
@@ -250,7 +260,7 @@ namespace CastHelper {
 					: null;
 			}
 		}
-
+		
 		private void btnCancel_Click(object sender, EventArgs e) {
 			Close();
 		}
