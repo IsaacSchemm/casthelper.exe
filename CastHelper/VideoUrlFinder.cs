@@ -10,7 +10,8 @@ using System.Windows.Forms;
 
 namespace CastHelper {
 	public static class VideoUrlFinder {
-		private static readonly Regex videoUrlRegex1 = new Regex(@"(https?:)?//([!#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})+\.(m3u8|mp4)");
+		// This search ignores query strings
+		private static readonly Regex videoUrlRegex1 = new Regex(@"(https?:)?//([!#$&-;=@-\[\]_a-z~]|%[0-9a-fA-F]{2})+\.(m3u8|mp4)");
 		private static readonly Regex jwPlatformRegex = new Regex(@"(https?:)?//content.jwplatform.com/players/[A-Za-z0-9-]+.html");
 
 		private static IEnumerable<string> GetUrlRegexMatches(Regex regex, string html) {
