@@ -230,7 +230,7 @@ namespace CastHelper {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show(this, @"CastHelper 1.1
+			MessageBox.Show(this, @"CastHelper 1.2
 Copyright © 2018 Isaac Schemm
 
 RokuDotNet
