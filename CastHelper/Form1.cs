@@ -137,9 +137,8 @@ namespace CastHelper {
 					switch (contentType.Split('/').First()) {
 						case "audio":
 							type = MediaType.Audio;
-							if (contentType == "audio/x-mpegurl") {
-								type = MediaType.Video;
-							}
+							if (contentType == "audio/mpegurl") type = MediaType.Video;
+							if (contentType == "audio/x-mpegurl") type = MediaType.Video;
 							break;
 						case "video":
 							type = MediaType.Video;
