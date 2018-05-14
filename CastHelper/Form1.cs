@@ -229,6 +229,7 @@ namespace CastHelper {
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
 			MessageBox.Show(this, @"CastHelper 1.2
 Copyright © 2018 Isaac Schemm
+https://github.com/IsaacSchemm/casthelper.exe
 
 RokuDotNet
 Copyright © 2018 Phillip Hoff
