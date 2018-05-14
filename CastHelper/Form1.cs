@@ -94,7 +94,7 @@ namespace CastHelper {
 				using (var resp = await req.GetResponseAsync())
 				using (var s = resp.GetResponseStream()) {
 					int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
-					if (code == 200 && new[] {
+					if (new[] {
 						"text/html",
 						"application/xml+xhtml"
 					}.Any(x => resp.ContentType.StartsWith(x))) {
@@ -104,19 +104,15 @@ namespace CastHelper {
 						} else {
 							return resp.ContentType;
 						}
-					} else if (code == 300 && new[] {
-						"text/html",
-						"application/xml+xhtml",
-						"audio/mpegurl"
-					}.Any(x => resp.ContentType.StartsWith(x))) {
-						string newUrl = await Disambiguation.DisambiguateAsync(req.RequestUri, _cookieContainer);
+					} else if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
+						string newUrl = await Disambiguation.DisambiguateM3uAsync(req.RequestUri, _cookieContainer);
 						if (newUrl != null) {
 							txtUrl.Text = newUrl;
 						} else {
 							return null;
 						}
 					} else if (code / 100 == 3) {
-						// redirect
+						// Redirect
 						txtUrl.Text = new Uri(uri, resp.Headers["Location"]).AbsoluteUri;
 					} else {
 						return resp.ContentType;
