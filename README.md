@@ -30,7 +30,7 @@ will also get an error when the content type does not begin with `audio/` or
 The request headers sent by Cast Helper are:
 
     User-Agent: CastHelper/1.2 (https://github.com/IsaacSchemm/casthelper.exe)
-	Accept: application/vnd.apple.mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*
+	Accept: application/vnd.apple.mpegurl,application/x-mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*
 
 (You can use these headers to redirect to raw video or audio content when you
 might normally return a web page. Note that text/html is missing from the
@@ -43,7 +43,9 @@ Helper will assume the file is an HLS stream.)
 
 If Cast Helper 1.2+ does recieve an HTML response, it will be scanned for MP4
 and HLS video URLs, and (if none exist) iframe URLs. If more than one is
-found, the user will be asked which URL they want to follow.
+found, the user will be asked which URL they want to follow. You shouldn't
+rely on this behavior - it will probably fail on the majority of websites -
+but it might be helpful in certain situations.
 
 Once the media is sent to the device, Cast Helper's main window will close.
 For Apple TV devices, another window will open to monitor playback; closing

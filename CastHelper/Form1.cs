@@ -131,14 +131,14 @@ namespace CastHelper {
 			try {
 				// Get type of media
 				string contentType = await FollowRedirectsToContentTypeAsync();
-				
+				contentType = contentType.ToLowerInvariant();
+
+
 				if (contentType != null) {
 					MediaType type = MediaType.Unknown;
 					switch (contentType.Split('/').First()) {
 						case "audio":
 							type = MediaType.Audio;
-							if (contentType == "audio/mpegurl") type = MediaType.Video;
-							if (contentType == "audio/x-mpegurl") type = MediaType.Video;
 							break;
 						case "video":
 							type = MediaType.Video;
@@ -150,14 +150,17 @@ namespace CastHelper {
 							type = MediaType.Text;
 							break;
 						default:
-							if (contentType.StartsWith("application/vnd.apple.mpegurl")) {
-								type = MediaType.Video;
-							} else if (contentType.StartsWith("application/dash+xml")) {
+							if (contentType.StartsWith("application/dash+xml")) {
 								type = MediaType.Video;
 							} else if (contentType.StartsWith("application/vnd.ms-sstr+xml")) {
 								type = MediaType.Video;
 							}
 							break;
+					}
+
+					if (contentType.Contains("mpegurl")) {
+						// Assume HLS
+						type = MediaType.Video;
 					}
 
 					if (type == MediaType.Unknown) {
