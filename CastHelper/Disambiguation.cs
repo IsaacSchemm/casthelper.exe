@@ -10,6 +10,20 @@ using System.Windows.Forms;
 
 namespace CastHelper {
 	public static class Disambiguation {
+		private class PlaylistItem {
+			public readonly string Name;
+			public readonly string Url;
+
+			public PlaylistItem(string name, string url) {
+				Name = name ?? throw new ArgumentNullException(nameof(name));
+				Url = url ?? throw new ArgumentNullException(nameof(url));
+			}
+
+			public override string ToString() {
+				return Name ?? Url;
+			}
+		}
+
 		public static async Task<string> DisambiguateAsync(Uri uri, CookieContainer cookieContainer = null) {
 			// Retrieve and display the HTML content.
 			var req = WebRequest.CreateHttp(uri);
@@ -21,36 +35,38 @@ namespace CastHelper {
 				req.CookieContainer = cookieContainer;
 			}
 			using (var resp = await req.GetResponseAsync())
-			using (var sr = new StreamReader(resp.GetResponseStream()))
-			using (var f = new Form {
-				Width = 500,
-				Height = 400
-			}) using (var w = new WebBrowser {
-				Dock = DockStyle.Fill,
-				ScriptErrorsSuppressed = true
-			}) {
-				string html = await sr.ReadToEndAsync();
-				html = new Regex("</head>", RegexOptions.IgnoreCase).Replace(
-					html,
-					$"<base href='{req.RequestUri}' /></head>");
-
-				f.Controls.Add(w);
-				f.Load += async (o, ea) => {
-					w.Navigate("about:blank");
-					while (w.Document?.Body == null) await Task.Delay(250);
-					w.DocumentText = html;
-				};
-				string url = null;
-				w.Navigating += (o, ea) => {
-					if (ea.Url.AbsoluteUri != "about:blank") {
-						url = ea.Url.AbsoluteUri;
-						f.DialogResult = DialogResult.OK;
-						f.Close();
+			using (var sr = new StreamReader(resp.GetResponseStream())) {
+				if (resp.ContentType.StartsWith("text/html") || resp.ContentType.StartsWith("application/xml+xhtml")) {
+					return VideoUrlFinder.GetVideoUriFromHtml(await sr.ReadToEndAsync());
+				} else if (resp.ContentType.StartsWith("audio/mpegurl")) {
+					if (await sr.ReadLineAsync() != "#EXTM3U") {
+						// Playlist header invalid
+						return null;
 					}
-				};
-				return f.ShowDialog() == DialogResult.OK
-					? url
-					: null;
+
+					List<PlaylistItem> list = new List<PlaylistItem>();
+					string name = null;
+					string line;
+					while ((line = await sr.ReadLineAsync()) != null) {
+						if (string.IsNullOrWhiteSpace(line)) continue;
+						if (line.StartsWith("#EXTINF:")) {
+							line = line.Substring("#EXTINF:".Length);
+							int comma = line.IndexOf(',');
+							name = line.Substring(comma + 1);
+						} else if (!line.StartsWith("#")) {
+							list.Add(new PlaylistItem(name, line));
+							name = null;
+						}
+					}
+
+					using (var f = new SelectTypeForm<PlaylistItem>("Multiple possible video URLs were found.", list)) {
+						return f.ShowDialog() == DialogResult.OK
+							? f.SelectedItem?.Url
+							: null;
+					}
+				} else {
+					return null;
+				}
 			}
 		}
 	}

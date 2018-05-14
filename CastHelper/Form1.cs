@@ -106,7 +106,8 @@ namespace CastHelper {
 						}
 					} else if (code == 300 && new[] {
 						"text/html",
-						"application/xml+xhtml"
+						"application/xml+xhtml",
+						"audio/mpegurl"
 					}.Any(x => resp.ContentType.StartsWith(x))) {
 						string newUrl = await Disambiguation.DisambiguateAsync(req.RequestUri, _cookieContainer);
 						if (newUrl != null) {

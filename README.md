@@ -36,15 +36,14 @@ The request headers sent by Cast Helper are:
 might normally return a web page. Note that text/html is missing from the
 Accept header.)
 
-If Cast Helper 1.2+ does recieve an HTML response, it will handle it on one of
-two ways, depending on the status code:
+To allow the user a choice of multiple items in Cast Helper 1.2+, have your
+server return an M3U mformatted playlist as an HTTP 300 response with a
+content type of audio/mpegurl. (Do not use an HTTP 200 status code - Cast
+Helper will assume the file is an HLS stream.)
 
-* HTTP 200 responses will be scanned for MP4 and HLS video URLs, and (if none
-exist) iframe URLs. If more than one is found, the user will be asked which
-URL they want to follow.
-* HTTP 300 responses will be displayed to the user in an embedded web browser.
-(By default, this embedded browser emulates IE 7.) If the user clicks a link
-on the page, the browser will close and Cast Helper will query the new URL.
+If Cast Helper 1.2+ does recieve an HTML response, it will be scanned for MP4
+and HLS video URLs, and (if none exist) iframe URLs. If more than one is
+found, the user will be asked which URL they want to follow.
 
 Once the media is sent to the device, Cast Helper's main window will close.
 For Apple TV devices, another window will open to monitor playback; closing
