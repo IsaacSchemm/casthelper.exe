@@ -85,6 +85,21 @@ namespace CastHelper {
 						: Uri.TryCreate("http://" + txtUrl.Text, UriKind.Absolute, out Uri tmp2) ? tmp2
 							: throw new FormatException("You must enter a valid URL.");
 
+				if (uri.Host == "portal.stretchinternet.com") {
+					var m = Regex.Match(uri.Query, "eventId=([0-9]+)");
+					if (m.Success && int.TryParse(m.Groups[1].Value, out int eventId)) {
+						try {
+							string newUrl = await StretchInternet.GetMediaUrlAsync(eventId);
+							if (newUrl != null) {
+								txtUrl.Text = newUrl;
+								continue;
+							}
+						} catch (Exception ex) {
+							Console.Error.WriteLine(ex);
+						}
+					}
+				}
+
 				var req = WebRequest.CreateHttp(uri);
 				req.Method = "HEAD";
 				req.Accept = Program.Accept;
@@ -132,8 +147,7 @@ namespace CastHelper {
 				// Get type of media
 				string contentType = await FollowRedirectsToContentTypeAsync();
 				contentType = contentType.ToLowerInvariant();
-
-
+				
 				if (contentType != null) {
 					MediaType type = MediaType.Unknown;
 					switch (contentType.Split('/').First()) {
