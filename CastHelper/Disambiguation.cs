@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace CastHelper {
 	public static class Disambiguation {
-		private class PlaylistItem {
+		public class PlaylistItem {
 			public readonly string Name;
 			public readonly string Url;
 
@@ -24,7 +24,17 @@ namespace CastHelper {
 			}
 		}
 
+
 		public static async Task<string> DisambiguateM3uAsync(Uri uri, CookieContainer cookieContainer = null) {
+			var list = await ParseM3uAsync(uri, cookieContainer);
+			using (var f = new SelectTypeForm<PlaylistItem>("Multiple possible video URLs were found.", list)) {
+				return f.ShowDialog() == DialogResult.OK
+					? f.SelectedItem?.Url
+					: null;
+			}
+		}
+
+		public static async Task<IReadOnlyList<PlaylistItem>> ParseM3uAsync(Uri uri, CookieContainer cookieContainer = null) {
 			// Retrieve and display the HTML content.
 			var req = WebRequest.CreateHttp(uri);
 			req.Method = "GET";
@@ -56,11 +66,7 @@ namespace CastHelper {
 					}
 				}
 
-				using (var f = new SelectTypeForm<PlaylistItem>("Multiple possible video URLs were found.", list)) {
-					return f.ShowDialog() == DialogResult.OK
-						? f.SelectedItem?.Url
-						: null;
-				}
+				return list;
 			}
 		}
 	}

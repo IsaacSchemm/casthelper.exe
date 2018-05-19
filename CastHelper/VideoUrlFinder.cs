@@ -21,8 +21,21 @@ namespace CastHelper {
 				yield return url;
 			}
 		}
-
+		
 		public static async Task<string> GetVideoUriFromUriAsync(Uri uri, CookieContainer cookieContainer = null) {
+			var urls = await GetVideoUrisFromUriAsync(uri, cookieContainer);
+			if (urls.Count() > 1) {
+				using (var f = new SelectTypeForm<string>("Multiple possible video URLs were found.", urls)) {
+					return f.ShowDialog() == DialogResult.OK
+						? f.SelectedItem
+						: null;
+				}
+			} else {
+				return urls.SingleOrDefault();
+			}
+		}
+
+		public static async Task<IEnumerable<string>> GetVideoUrisFromUriAsync(Uri uri, CookieContainer cookieContainer = null) {
 			var req = WebRequest.CreateHttp(uri);
 			req.Method = "GET";
 			req.Accept = Program.Accept;
@@ -34,22 +47,14 @@ namespace CastHelper {
 			using (var resp = await req.GetResponseAsync())
 			using (var sr = new StreamReader(resp.GetResponseStream())) {
 				string html = await sr.ReadToEndAsync();
-				return GetVideoUriFromHtml(html);
+				return GetVideoUrisFromHtml(html);
 			}
 		}
 
-		public static string GetVideoUriFromHtml(string html) {
+		public static IEnumerable<string> GetVideoUrisFromHtml(string html) {
 			var urls = GetUrlRegexMatches(videoUrlRegex1, 1, html).Distinct().ToList();
 			if (!urls.Any()) urls = GetUrlRegexMatches(iframeRegex, 1, html).Distinct().ToList();
-			if (urls.Count > 1) {
-				using (var f = new SelectTypeForm<string>("Multiple possible video URLs were found.", urls)) {
-					return f.ShowDialog() == DialogResult.OK
-						? f.SelectedItem
-						: null;
-				}
-			} else {
-				return urls.SingleOrDefault();
-			}
+			return urls;
 		}
 	}
 }
