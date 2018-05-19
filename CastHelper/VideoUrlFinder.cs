@@ -25,7 +25,7 @@ namespace CastHelper {
 		public static async Task<string> GetVideoUriFromUriAsync(Uri uri, CookieContainer cookieContainer = null) {
 			var urls = await GetVideoUrisFromUriAsync(uri, cookieContainer);
 			if (urls.Count() > 1) {
-				using (var f = new SelectTypeForm<string>("Multiple possible video URLs were found.", urls)) {
+				using (var f = new SelectForm<string>("Multiple possible video URLs were found.", urls)) {
 					return f.ShowDialog() == DialogResult.OK
 						? f.SelectedItem
 						: null;

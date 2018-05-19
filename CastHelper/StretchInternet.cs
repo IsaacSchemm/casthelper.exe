@@ -44,7 +44,7 @@ namespace CastHelper {
 			var urls = await GetMediaUrlsAsync(eventId);
 			if (urls.Count() < 2) return urls.FirstOrDefault();
 
-			using (var f = new SelectTypeForm<string>("Multiple possible video URLs were found.", urls)) {
+			using (var f = new SelectForm<string>("Multiple possible video URLs were found.", urls)) {
 				return f.ShowDialog() == DialogResult.OK
 					? f.SelectedItem
 					: null;

@@ -178,7 +178,7 @@ namespace CastHelper {
 					}
 
 					if (type == MediaType.Unknown) {
-						using (var f = new SelectTypeForm<MediaType>("Could not detect media type. Please select a type below:", (MediaType[])Enum.GetValues(typeof(MediaType)))) {
+						using (var f = new SelectForm<MediaType>("Could not detect media type. Please select a type below:", (MediaType[])Enum.GetValues(typeof(MediaType)))) {
 							if (f.ShowDialog(this) == DialogResult.OK) {
 								type = f.SelectedItem;
 							}

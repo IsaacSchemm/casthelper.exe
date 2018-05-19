@@ -1,5 +1,5 @@
 ﻿namespace CastHelper {
-	partial class SelectTypeForm<T> {
+	partial class SelectForm<T> {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>

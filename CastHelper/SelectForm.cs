@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CastHelper {
-	public partial class SelectTypeForm<T> : Form {
+	public partial class SelectForm<T> : Form {
 		public T SelectedItem => (T)comboBox1.SelectedItem;
 
-		public SelectTypeForm(string label, IEnumerable<T> items) {
+		public SelectForm(string label, IEnumerable<T> items) {
 			InitializeComponent();
 			label1.Text = label;
 			comboBox1.Items.Clear();

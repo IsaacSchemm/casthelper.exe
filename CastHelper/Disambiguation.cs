@@ -27,7 +27,7 @@ namespace CastHelper {
 
 		public static async Task<string> DisambiguateM3uAsync(Uri uri, CookieContainer cookieContainer = null) {
 			var list = await ParseM3uAsync(uri, cookieContainer);
-			using (var f = new SelectTypeForm<PlaylistItem>("Multiple possible video URLs were found.", list)) {
+			using (var f = new SelectForm<PlaylistItem>("Multiple possible video URLs were found.", list)) {
 				return f.ShowDialog() == DialogResult.OK
 					? f.SelectedItem?.Url
 					: null;
