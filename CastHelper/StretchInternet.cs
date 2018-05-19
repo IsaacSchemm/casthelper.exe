@@ -15,13 +15,13 @@ namespace CastHelper {
 		[DataContract]
 		private class Event {
 			[DataMember]
-			public Media[] media;
+			public Media[] media = new Media[0];
 		}
 
 		[DataContract]
 		private class Media {
 			[DataMember]
-			public string url;
+			public string url = "";
 		}
 
 		public static async Task<IEnumerable<string>> GetMediaUrlsAsync(int eventId) {
