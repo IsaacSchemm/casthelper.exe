@@ -12,16 +12,16 @@ namespace CastHelper {
 		public readonly IEnumerable<PlaylistItem> Links;
 
 		public ResolverResult(string contentType) {
-			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
+			ContentType = contentType;
 			Links = Enumerable.Empty<PlaylistItem>();
 		}
 
-		public ResolverResult(IEnumerable<PlaylistItem> links) {
-			ContentType = null;
+		public ResolverResult(string contentType, IEnumerable<PlaylistItem> links) {
+			ContentType = contentType;
 			Links = links?.ToList() ?? throw new ArgumentNullException(nameof(links));
 		}
 
-		public ResolverResult(IEnumerable<string> links) : this(links.Select(x => new PlaylistItem(x, x))) { }
+		public ResolverResult(string contentType, IEnumerable<string> links) : this(contentType, links.Select(x => new PlaylistItem(x, x))) { }
 	}
 
 	public static class Resolver {
@@ -39,7 +39,7 @@ namespace CastHelper {
 					try {
 						var urls = await StretchInternet.GetMediaUrlsAsync(eventId);
 						if (urls.Any()) {
-							return new ResolverResult(urls);
+							return new ResolverResult("text/html", urls);
 						}
 					} catch (Exception ex) {
 						Console.Error.WriteLine(ex);
@@ -58,14 +58,14 @@ namespace CastHelper {
 				int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
 				bool isHtml = new[] { "text/html", "application/xml+xhtml" }.Any(x => resp.ContentType.StartsWith(x));
 				if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
-					return new ResolverResult(await Disambiguation.ParseM3uAsync(req.RequestUri, cookieContainer));
+					return new ResolverResult(resp.ContentType, await Disambiguation.ParseM3uAsync(req.RequestUri, cookieContainer));
 				} else if (code == 300 && isHtml) {
-					return new ResolverResult(await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
+					return new ResolverResult(resp.ContentType, await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
 				} else if (code / 100 == 3) {
 					// Redirect
-					return new ResolverResult(new[] { new Uri(uri, resp.Headers["Location"]).AbsoluteUri });
+					return new ResolverResult(resp.ContentType, new[] { new Uri(uri, resp.Headers["Location"]).AbsoluteUri });
 				} else if (isHtml) {
-					return new ResolverResult(await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
+					return new ResolverResult(resp.ContentType, await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
 				} else {
 					return new ResolverResult(resp.ContentType);
 				}
