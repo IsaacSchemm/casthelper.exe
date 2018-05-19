@@ -81,57 +81,21 @@ namespace CastHelper {
 		
 		private async Task<string> FollowRedirectsToContentTypeAsync() {
 			for (int i = 0; i < 50; i++) {
-				Uri uri = Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out Uri tmp1) ? tmp1
-						: Uri.TryCreate("http://" + txtUrl.Text, UriKind.Absolute, out Uri tmp2) ? tmp2
-							: throw new FormatException("You must enter a valid URL.");
-
-				if (uri.Host == "portal.stretchinternet.com") {
-					var m = Regex.Match(uri.Query, "eventId=([0-9]+)");
-					if (m.Success && int.TryParse(m.Groups[1].Value, out int eventId)) {
-						try {
-							string newUrl = await StretchInternet.GetMediaUrlAsync(eventId);
-							if (newUrl != null) {
-								txtUrl.Text = newUrl;
-								continue;
-							}
-						} catch (Exception ex) {
-							Console.Error.WriteLine(ex);
-						}
-					}
-				}
-
-				var req = WebRequest.CreateHttp(uri);
-				req.Method = "HEAD";
-				req.Accept = Program.Accept;
-				req.UserAgent = Program.UserAgent;
-				req.AllowAutoRedirect = false;
-				req.CookieContainer = _cookieContainer;
-				using (var resp = await req.GetResponseAsync())
-				using (var s = resp.GetResponseStream()) {
-					int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
-					if (new[] {
-						"text/html",
-						"application/xml+xhtml"
-					}.Any(x => resp.ContentType.StartsWith(x))) {
-						string newUrl = await VideoUrlFinder.GetVideoUriFromUriAsync(req.RequestUri, _cookieContainer);
-						if (newUrl != null) {
-							txtUrl.Text = newUrl;
-						} else {
-							return resp.ContentType;
-						}
-					} else if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
-						string newUrl = await Disambiguation.DisambiguateM3uAsync(req.RequestUri, _cookieContainer);
-						if (newUrl != null) {
-							txtUrl.Text = newUrl;
+				var result = await Resolver.ResolveAsync(txtUrl.Text, _cookieContainer);
+				if (result.Links.Count() == 1) {
+					txtUrl.Text = result.Links.Select(x => x.Url).Single();
+					continue;
+				} else if (result.Links.Any()) {
+					using (var f = new SelectForm<PlaylistItem>(Text, result.Links)) {
+						if (f.ShowDialog() == DialogResult.OK) {
+							txtUrl.Text = f.SelectedItem.Url;
+							continue;
 						} else {
 							return null;
 						}
-					} else if (code / 100 == 3) {
-						// Redirect
-						txtUrl.Text = new Uri(uri, resp.Headers["Location"]).AbsoluteUri;
-					} else {
-						return resp.ContentType;
 					}
+				} else {
+					return result.ContentType;
 				}
 			}
 
@@ -146,7 +110,7 @@ namespace CastHelper {
 			try {
 				// Get type of media
 				string contentType = await FollowRedirectsToContentTypeAsync();
-				contentType = contentType.ToLowerInvariant();
+				contentType = contentType?.ToLowerInvariant();
 				
 				if (contentType != null) {
 					MediaType type = MediaType.Unknown;

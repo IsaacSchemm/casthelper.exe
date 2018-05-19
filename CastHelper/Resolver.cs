@@ -9,17 +9,19 @@ using System.Threading.Tasks;
 namespace CastHelper {
 	public class ResolverResult {
 		public readonly string ContentType;
-		public readonly IEnumerable<string> Links;
+		public readonly IEnumerable<PlaylistItem> Links;
 
 		public ResolverResult(string contentType) {
 			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
-			Links = Enumerable.Empty<string>();
+			Links = Enumerable.Empty<PlaylistItem>();
 		}
 
-		public ResolverResult(IEnumerable<string> links) {
+		public ResolverResult(IEnumerable<PlaylistItem> links) {
 			ContentType = null;
 			Links = links?.ToList() ?? throw new ArgumentNullException(nameof(links));
 		}
+
+		public ResolverResult(IEnumerable<string> links) : this(links.Select(x => new PlaylistItem(x, x))) { }
 	}
 
 	public static class Resolver {
@@ -54,16 +56,16 @@ namespace CastHelper {
 			using (var resp = await req.GetResponseAsync())
 			using (var s = resp.GetResponseStream()) {
 				int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
-				if (new[] {
-						"text/html",
-						"application/xml+xhtml"
-					}.Any(x => resp.ContentType.StartsWith(x))) {
+				bool isHtml = new[] { "text/html", "application/xml+xhtml" }.Any(x => resp.ContentType.StartsWith(x));
+				if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
+					return new ResolverResult(await Disambiguation.ParseM3uAsync(req.RequestUri, cookieContainer));
+				} else if (code == 300 && isHtml) {
 					return new ResolverResult(await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
-				} else if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
-					return new ResolverResult((await Disambiguation.ParseM3uAsync(req.RequestUri, cookieContainer)).Select(p => p.Url));
 				} else if (code / 100 == 3) {
 					// Redirect
 					return new ResolverResult(new[] { new Uri(uri, resp.Headers["Location"]).AbsoluteUri });
+				} else if (isHtml) {
+					return new ResolverResult(await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
 				} else {
 					return new ResolverResult(resp.ContentType);
 				}

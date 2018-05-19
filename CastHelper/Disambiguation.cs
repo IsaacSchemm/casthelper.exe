@@ -10,21 +10,6 @@ using System.Windows.Forms;
 
 namespace CastHelper {
 	public static class Disambiguation {
-		public class PlaylistItem {
-			public readonly string Name;
-			public readonly string Url;
-
-			public PlaylistItem(string name, string url) {
-				Name = name ?? throw new ArgumentNullException(nameof(name));
-				Url = url ?? throw new ArgumentNullException(nameof(url));
-			}
-
-			public override string ToString() {
-				return Name ?? Url;
-			}
-		}
-
-
 		public static async Task<string> DisambiguateM3uAsync(Uri uri, CookieContainer cookieContainer = null) {
 			var list = await ParseM3uAsync(uri, cookieContainer);
 			using (var f = new SelectForm<PlaylistItem>("Multiple possible video URLs were found.", list)) {
