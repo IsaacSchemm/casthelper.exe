@@ -37,7 +37,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         Await TestSimple("http://nau-tv.com/watchlive/", "application/vnd.apple.mpegurl")
     End Function
 
-    <TestMethod()> Public Async Function StretchInternet() As Task
+    <TestMethod()> Public Async Function StretchInternetVOD() As Task
         Await TestSimple("https://portal.stretchinternet.com/kwu/portal.htm?eventId=444970&streamType=video", "video/mp4")
     End Function
 
@@ -45,19 +45,33 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         Await TestSimple("http://www.wbay.com/livestream", "application/vnd.apple.mpegurl")
     End Function
 
+    <TestMethod()> Public Async Function VideoJS_HLS() As Task
+        Dim cookieContainer As New CookieContainer
+        Dim result1 = Await Resolver.ResolveAsync("https://videojs.github.io/videojs-contrib-hls/", cookieContainer)
+        For Each link In result1.Links
+            If Not link.Url.Contains("example.com") Then
+                Await TestSimple(link.Url, "application/vnd.apple.mpegurl")
+            End If
+        Next
+    End Function
+
     <TestMethod()> Public Async Function WFRV_VOD() As Task
         Await TestSimple("http://www.wearegreenbay.com/local-5-live/local-5-live-recipes/smoked-salmon-cucumber-flatbread/1187259490", "video/mp4")
     End Function
 
-    <TestMethod()> Public Async Function Livestream() As Task
-        Dim cookieContainer As New CookieContainer
-        Dim result1 = Await Resolver.ResolveAsync("http://ktla.com/on-air/live-streaming/", cookieContainer)
-        Assert.IsTrue(result1.Links.Count() > 1)
-        Await TestSimple(result1.Links.Where(Function(s) Not s.Url.Contains("googletagmanager")).First.Url, "application/vnd.apple.mpegurl")
+    <TestMethod()> Public Async Function SingleMP4() As Task
+        Await TestSimple("http://www.html5videoplayer.net/html5video/mp4-h-264-video-test/", "video/mp4")
     End Function
 
-    <TestMethod()> Public Async Function Html5VideoPlayerNet() As Task
-        Await TestSimple("http://www.html5videoplayer.net/html5video/mp4-h-264-video-test/", "video/mp4")
+    <TestMethod()> Public Async Function MultipleMP4() As Task
+        Dim cookieContainer As New CookieContainer
+        Dim result1 = Await Resolver.ResolveAsync("https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video", cookieContainer)
+        If result1.Links.Count < 2 Then
+            Assert.Inconclusive()
+        End If
+        For Each link In result1.links
+            Await TestSimple(link.Url, "video/mp4")
+        Next
     End Function
 
 End Class
