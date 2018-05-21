@@ -47,28 +47,36 @@ namespace CastHelper {
 				}
 			}
 
-			var req = WebRequest.CreateHttp(uri);
-			req.Method = "HEAD";
-			req.Accept = Program.Accept;
-			req.UserAgent = Program.UserAgent;
-			req.AllowAutoRedirect = false;
-			req.CookieContainer = cookieContainer;
-			using (var resp = await req.GetResponseAsync())
-			using (var s = resp.GetResponseStream()) {
-				int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
-				bool isHtml = new[] { "text/html", "application/xml+xhtml" }.Any(x => resp.ContentType.StartsWith(x));
-				if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
-					return new ResolverResult(resp.ContentType, await Disambiguation.ParseM3uAsync(req.RequestUri, cookieContainer));
-				} else if (code == 300 && isHtml) {
-					return new ResolverResult(resp.ContentType, await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
-				} else if (code / 100 == 3) {
-					// Redirect
-					return new ResolverResult(resp.ContentType, new[] { new Uri(uri, resp.Headers["Location"]).AbsoluteUri });
-				} else if (isHtml) {
-					return new ResolverResult(resp.ContentType, await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
-				} else {
-					return new ResolverResult(resp.ContentType);
+			async Task<ResolverResult> http(string method) {
+				var req = WebRequest.CreateHttp(uri);
+				req.Method = method;
+				req.Accept = Program.Accept;
+				req.UserAgent = Program.UserAgent;
+				req.AllowAutoRedirect = false;
+				req.CookieContainer = cookieContainer;
+				using (var resp = await req.GetResponseAsync())
+				using (var s = resp.GetResponseStream()) {
+					int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
+					bool isHtml = new[] { "text/html", "application/xml+xhtml" }.Any(x => resp.ContentType.StartsWith(x));
+					if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
+						return new ResolverResult(resp.ContentType, await Disambiguation.ParseM3uAsync(req.RequestUri, cookieContainer));
+					} else if (code == 300 && isHtml) {
+						return new ResolverResult(resp.ContentType, await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
+					} else if (code / 100 == 3) {
+						// Redirect
+						return new ResolverResult(resp.ContentType, new[] { new Uri(uri, resp.Headers["Location"]).AbsoluteUri });
+					} else if (isHtml) {
+						return new ResolverResult(resp.ContentType, await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
+					} else {
+						return new ResolverResult(resp.ContentType);
+					}
 				}
+			}
+
+			try {
+				return await http("HEAD");
+			} catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
+				return await http("GET");
 			}
 		}
 	}
