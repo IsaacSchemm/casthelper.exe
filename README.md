@@ -54,7 +54,12 @@ DASH, or Smooth Streaming manifest.
 The request headers sent by Cast Helper are:
 
     User-Agent: CastHelper/1.2 (https://github.com/IsaacSchemm/casthelper.exe)
-	Accept: application/vnd.apple.mpegurl,application/x-mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*
+	Accept: application/vnd.apple.mpegurl,application/x-mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,vido/*,audio/*
+
+or:
+
+    User-Agent: CastHelper/1.3 (https://github.com/IsaacSchemm/casthelper.exe)
+	Accept: application/vnd.apple.mpegurl,application/x-mpegurl,application/dash+xml,application/vnd.ms-sstr+xml,video/*,audio/*,*/*;q=0.9
 
 If you are developing a web application and you want your users to be able to
 use Cast Helper, I would suggest looking at the Accept header and checking if

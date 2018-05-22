@@ -77,9 +77,14 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         Await TestSimple("https://www.wowza.com/blog/webinar-how-stetson-university-met-the-challenges-of-providing-campus-wide", "application/vnd.apple.mpegurl")
     End Function
 
-    <TestMethod()> Public Async Function WFRV_VOD() As Task
-        ' Simple 
-        Await TestSimple("http://www.wearegreenbay.com/local-5-live/local-5-live-recipes/smoked-salmon-cucumber-flatbread/1187259490", "video/mp4")
+    <TestMethod()> Public Async Function SanDiegoZoo() As Task
+        ' iframe, throws 406 if text/html not acceptable
+        Dim result1 = Await Resolver.ResolveAsync("http://zoo.sandiegozoo.org/cams/panda-cam")
+        Dim link1 = result1.Links.Where(Function(l) Not l.Url.Contains("googletagmanager")).Single
+        Dim result2 = Await Resolver.ResolveAsync(link1.Url)
+        For Each link2 In result2.Links
+            Await TestSimple(link2.Url, "application/vnd.apple.mpegurl")
+        Next
     End Function
 
     <TestMethod()> Public Async Function SingleMP4() As Task
