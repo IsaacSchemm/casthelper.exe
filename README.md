@@ -4,19 +4,35 @@ Download: https://github.com/IsaacSchemm/casthelper.exe/releases
 
 Screenshots: https://imgur.com/a/j3lRBfE
 
-Cast Helper is a small .NET Framework / Windows Forms application that lets you
-send media URLs to a Roku or Apple TV on your local area network.
+Cast Helper is a small portable Windows application that lets you cast video
+from the Internet to a Roku or Apple TV on your local area network.
 
-Both Roku and Apple TV devices will detect the format of a video on their own,
-so any video format that the device supports should work. Cast Helper also
+Any video format that the device supports should work. Cast Helper also
 supports sending .mp3 and .m4a audio to Roku devices. Photos are not currently
 supported on either device.
 
-You can pass a URL as a command-line argument to casthelper.exe to pre-fill
-the URL box. The media won't start automatically, because the user still needs
-to select a device.
+## How to use
 
-## Behavior
+1. Download casthelper.exe from the [releases page](https://github.com/IsaacSchemm/casthelper.exe/releases) and run it. (Linux or Unix users can use Mono.)
+
+2. Cast Helper will search for available Apple TV and Roku devices on your
+   network. Choose the device you want to cast to from the drop-down list.
+
+3. Paste the media URL into the URL text box. (If you put the URL to a webpage
+   in this box, Cast Helper will try its best to find any HLS or MP4 videos on
+   the page.)
+
+4. Click the Play button.
+
+Once the media is sent to the device, Cast Helper's main window will close.
+For Apple TV devices, another window will open to monitor playback; closing
+this window will stop the video on the Apple TV. (Roku devices continue to
+play on their own once the video is started.)
+
+If no Apple TV or Roku devices appear, Cast Helper won't work for you, and
+you'll need to find another way to cast video.
+
+## For developers
 
 When the user clicks Play, Cast Helper will make an HTTP HEAD request to the
 given URL to determine the type of the data. If it encounters a redirect, it
@@ -28,13 +44,6 @@ and HLS video URLs, and (if none exist) iframe URLs. If more than one is
 found, the user will be asked which URL they want to follow. This behavior
 won't always work, but it might help on certain small websites (such as
 community TV or university campus live streams.)
-
-Once the media is sent to the device, Cast Helper's main window will close.
-For Apple TV devices, another window will open to monitor playback; closing
-this window will stop the video on the Apple TV. (Roku devices continue to
-play on their own once the video is started.)
-
-## For web developers
 
 HTTP errors will result in an error message. There are unique error messages
 for HTTP 404 Not Found, HTTP 406 Not Acceptable, and HTTP 410 Gone. The user
