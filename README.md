@@ -63,9 +63,8 @@ or:
 
 If you are developing a web application and you want your users to be able to
 use Cast Helper, I would suggest looking at the Accept header and checking if
-the client prefers video/mp4 over text/html.
+the client prefers audio/x-mpegurl over text/html.
 
 To allow the user a choice of multiple items in Cast Helper 1.2+, have your
-server return an M3U mformatted playlist as an HTTP 300 response with a
-content type of audio/mpegurl. (Do not use an HTTP 200 status code, or Cast
-Helper will assume the file is an HLS stream.)
+server return an M3U formatted playlist (which is not a valid HLS playlist)
+with a content type of audio/mpegurl and an HTTP 300 status code.

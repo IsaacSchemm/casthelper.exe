@@ -103,9 +103,9 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         Next
     End Function
 
-    <TestMethod()> Public Async Function M3u8Disambiguation() As Task
-        Dim result1 = Await Resolver.ResolveAsync("https://www.lakora.us/casthelper/300.m3u8.php")
-        Assert.AreEqual("audio/mpegurl", result1.ContentType)
+    <TestMethod()> Public Async Function Http200M3u8Disambiguation() As Task
+        Dim result1 = Await Resolver.ResolveAsync("https://www.lakora.us/casthelper/200.playlist.php")
+        Assert.AreEqual("audio/x-mpegurl", result1.ContentType)
         Assert.AreEqual(2, result1.Links.Count)
         Assert.AreEqual(result1.Links(0).Name, "An MP4 file")
         Assert.AreEqual(result1.Links(0).Url, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")
@@ -113,7 +113,25 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         Assert.AreEqual(result1.Links(1).Url, "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/v5/prog_index.m3u8")
     End Function
 
-    <TestMethod()> Public Async Function HtmlDisambiguation() As Task
+    <TestMethod()> Public Async Function Http200HtmlDisambiguation() As Task
+        Dim result1 = Await Resolver.ResolveAsync("https://www.lakora.us/casthelper/200.html.php")
+        Assert.IsTrue(result1.ContentType.StartsWith("text/html"))
+        Assert.AreEqual(2, result1.Links.Count)
+        Assert.AreEqual(result1.Links(0).Url, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")
+        Assert.AreEqual(result1.Links(1).Url, "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/v5/prog_index.m3u8")
+    End Function
+
+    <TestMethod()> Public Async Function Http300M3u8Disambiguation() As Task
+        Dim result1 = Await Resolver.ResolveAsync("https://www.lakora.us/casthelper/300.playlist.php")
+        Assert.AreEqual("audio/x-mpegurl", result1.ContentType)
+        Assert.AreEqual(2, result1.Links.Count)
+        Assert.AreEqual(result1.Links(0).Name, "An MP4 file")
+        Assert.AreEqual(result1.Links(0).Url, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")
+        Assert.AreEqual(result1.Links(1).Name, "An HLS live stream")
+        Assert.AreEqual(result1.Links(1).Url, "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/v5/prog_index.m3u8")
+    End Function
+
+    <TestMethod()> Public Async Function Http300HtmlDisambiguation() As Task
         Dim result1 = Await Resolver.ResolveAsync("https://www.lakora.us/casthelper/300.html.php")
         Assert.IsTrue(result1.ContentType.StartsWith("text/html"))
         Assert.AreEqual(2, result1.Links.Count)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -58,8 +59,24 @@ namespace CastHelper {
 				using (var s = resp.GetResponseStream()) {
 					int? code = (int?)(resp as HttpWebResponse)?.StatusCode;
 					bool isHtml = new[] { "text/html", "application/xml+xhtml" }.Any(x => resp.ContentType.StartsWith(x));
-					if (code == 300 && resp.ContentType.StartsWith("audio/mpegurl")) {
-						return new ResolverResult(resp.ContentType, await Disambiguation.ParseM3uAsync(req.RequestUri, cookieContainer));
+					if (code >= 200 && code <= 300 && resp.ContentType.Contains("mpegurl")) {
+						var req2 = WebRequest.CreateHttp(uri);
+						req2.Method = "GET";
+						req2.Accept = Program.Accept;
+						req2.UserAgent = Program.UserAgent;
+						req2.AllowAutoRedirect = false;
+						req2.CookieContainer = cookieContainer;
+						using (var resp2 = await req2.GetResponseAsync())
+						using (var sr2 = new StreamReader(resp2.GetResponseStream())) {
+							string contents = await sr2.ReadToEndAsync();
+							if (contents.Contains("#EXT-X-MEDIA-SEQUENCE") || contents.Contains("#EXT-X-STREAM-INF")) {
+								// HLS
+								return new ResolverResult(resp.ContentType);
+							} else {
+								// Other playlist
+								return new ResolverResult(resp.ContentType, await Disambiguation.ParseM3uAsync(contents));
+							}
+						}
 					} else if (code == 300 && isHtml) {
 						return new ResolverResult(resp.ContentType, await VideoUrlFinder.GetVideoUrisFromUriAsync(req.RequestUri, cookieContainer));
 					} else if (code / 100 == 3) {
