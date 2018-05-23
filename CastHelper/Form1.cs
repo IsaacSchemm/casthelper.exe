@@ -106,6 +106,12 @@ namespace CastHelper {
 			comboBox1.Enabled = false;
 			txtUrl.Enabled = false;
 			btnPlay.Enabled = false;
+
+			foreach (var o in comboBox1.Items) {
+				if (o is NamedRokuDevice d) {
+					d.ShowControls = showPlaybackControlWindowToolStripMenuItem.Checked;
+				}
+			}
 			
 			try {
 				// Get type of media

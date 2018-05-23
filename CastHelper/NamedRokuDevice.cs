@@ -12,6 +12,7 @@ namespace CastHelper {
 	public class NamedRokuDevice : IRokuDevice, IVideoDevice, IAudioDevice {
 		private IRokuDevice _device;
 		public string Name { get; private set; }
+		public bool ShowControls { get; set; }
 
 		public NamedRokuDevice(IRokuDevice device, string name) {
 			_device = device ?? throw new ArgumentNullException(nameof(device));
@@ -32,6 +33,14 @@ namespace CastHelper {
 				using (var s = resp.GetResponseStream()) { }
 			} catch (Exception ex) {
 				throw new Exception("Could not send media to Roku.", ex);
+			}
+
+			if (ShowControls) {
+				using (var f = new RokuRemote(Input)) {
+					f.Text = Name;
+					f.ShowDialog();
+					await f.LastTask;
+				}
 			}
 		}
 
@@ -56,6 +65,14 @@ namespace CastHelper {
 				using (var s = resp.GetResponseStream()) { }
 			} catch (Exception ex) {
 				throw new Exception("Could not send media to Roku.", ex);
+			}
+
+			if (ShowControls) {
+				using (var f = new RokuRemote(Input)) {
+					f.Text = Name;
+					f.ShowDialog();
+					await f.LastTask;
+				}
 			}
 		}
 

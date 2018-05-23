@@ -110,6 +110,12 @@
     <Compile Include="RokuDotNet\src\RokuDotNet.Client\RokuDevice.cs" />
     <Compile Include="RokuDotNet\src\RokuDotNet.Client\RokuDeviceDiscoveryClient.cs" />
     <Compile Include="RokuDotNet\src\RokuDotNet.Client\RokuDeviceDiscoveryClientExtensions.cs" />
+    <Compile Include="RokuRemote.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RokuRemote.Designer.cs">
+      <DependentUpon>RokuRemote.cs</DependentUpon>
+    </Compile>
     <Compile Include="SelectForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -140,6 +146,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RokuRemote.resx">
+      <DependentUpon>RokuRemote.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectForm.resx">
       <DependentUpon>SelectForm.cs</DependentUpon>
     </EmbeddedResource>
