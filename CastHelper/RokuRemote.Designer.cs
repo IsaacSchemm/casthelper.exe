@@ -27,6 +27,8 @@
             this.btnRewind = new System.Windows.Forms.Button();
             this.btnPlayPause = new System.Windows.Forms.Button();
             this.btnFastForward = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnInstantReplay
@@ -73,11 +75,35 @@
             this.btnFastForward.UseVisualStyleBackColor = true;
             this.btnFastForward.Click += new System.EventHandler(this.btnFastForward_Click);
             // 
+            // btnStop
+            // 
+            this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStop.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnStop.Location = new System.Drawing.Point(147, 106);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(75, 23);
+            this.btnStop.TabIndex = 5;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Location = new System.Drawing.Point(12, 55);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(210, 48);
+            this.label1.TabIndex = 4;
+            // 
             // RokuRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(234, 64);
+            this.ClientSize = new System.Drawing.Size(234, 141);
+            this.Controls.Add(this.btnStop);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnFastForward);
             this.Controls.Add(this.btnPlayPause);
             this.Controls.Add(this.btnRewind);
@@ -95,5 +121,7 @@
 		private System.Windows.Forms.Button btnRewind;
 		private System.Windows.Forms.Button btnPlayPause;
 		private System.Windows.Forms.Button btnFastForward;
+		private System.Windows.Forms.Button btnStop;
+		private System.Windows.Forms.Label label1;
 	}
 }

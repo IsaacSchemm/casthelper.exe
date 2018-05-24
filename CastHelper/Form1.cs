@@ -199,6 +199,7 @@ namespace CastHelper {
 				MessageBox.Show(this, "An unknown error occurred.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
+			Show();
 			comboBox1.Enabled = true;
 			txtUrl.Enabled = true;
 			btnPlay.Enabled = true;

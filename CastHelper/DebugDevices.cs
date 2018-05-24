@@ -14,9 +14,15 @@ namespace CastHelper {
 			return PlayVideoAsync(url);
 		}
 
-		public Task PlayVideoAsync(string url) {
+		public async Task PlayVideoAsync(string url) {
 			Process.Start("microsoft-edge:" + url);
-			return Task.CompletedTask;
+			//using (var f = new RokuRemote(null)) {
+			//	f.LabelText = $"Debug only - buttons won't work";
+			//	f.Text = Name;
+			//	f.ShowDialog();
+			//	await f.LastTask;
+			//}
+			await Task.CompletedTask;
 		}
 
 		public override string ToString() {
