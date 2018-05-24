@@ -38,15 +38,15 @@ namespace CastHelper {
 		}
 
 		private void btnPlayPause_Click(object sender, EventArgs e) {
-			RokuKeyPress(SpecialKeys.Forward);
-		}
-
-		private void btnFastForward_Click(object sender, EventArgs e) {
 			RokuKeyPress(SpecialKeys.Play);
 		}
 
+		private void btnFastForward_Click(object sender, EventArgs e) {
+			RokuKeyPress(SpecialKeys.Forward);
+		}
+		
 		private void RokuRemote_FormClosing(object sender, FormClosingEventArgs e) {
-			var result = MessageBox.Show(this, "Would you like to stop video playback on the Roku device?", Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+			var result = MessageBox.Show(this, "Would you like to stop video playback on the Roku?", Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.Cancel) e.Cancel = true;
 			if (result == DialogResult.Yes) LastTask = _roku?.KeyPressAsync(SpecialKeys.Home);
 		}

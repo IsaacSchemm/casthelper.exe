@@ -31,12 +31,12 @@
             // 
             // btnInstantReplay
             // 
-            this.btnInstantReplay.Font = new System.Drawing.Font("Wingdings 3", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+            this.btnInstantReplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnInstantReplay.Location = new System.Drawing.Point(28, 12);
             this.btnInstantReplay.Name = "btnInstantReplay";
             this.btnInstantReplay.Size = new System.Drawing.Size(40, 40);
             this.btnInstantReplay.TabIndex = 2;
-            this.btnInstantReplay.Text = "Q";
+            this.btnInstantReplay.Text = "↺";
             this.btnInstantReplay.UseVisualStyleBackColor = true;
             this.btnInstantReplay.Click += new System.EventHandler(this.btnInstantReplay_Click);
             // 

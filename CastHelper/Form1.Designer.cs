@@ -24,13 +24,13 @@
             this.rokuToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.rescanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manuallyEnterIPAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.showPlaybackControlWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblSearching = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.showPlaybackControlWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -113,7 +113,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
             // exitToolStripMenuItem
@@ -131,35 +131,49 @@
             this.toolStripMenuItem1,
             this.showPlaybackControlWindowToolStripMenuItem});
             this.rokuToolStripMenuItem1.Name = "rokuToolStripMenuItem1";
-            this.rokuToolStripMenuItem1.Size = new System.Drawing.Size(46, 20);
+            this.rokuToolStripMenuItem1.Size = new System.Drawing.Size(43, 20);
             this.rokuToolStripMenuItem1.Text = "&Roku";
             // 
             // rescanToolStripMenuItem
             // 
             this.rescanToolStripMenuItem.Name = "rescanToolStripMenuItem";
-            this.rescanToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.rescanToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.rescanToolStripMenuItem.Text = "&Rescan";
             this.rescanToolStripMenuItem.Click += new System.EventHandler(this.rescanToolStripMenuItem_Click_1);
             // 
             // manuallyEnterIPAddressToolStripMenuItem
             // 
             this.manuallyEnterIPAddressToolStripMenuItem.Name = "manuallyEnterIPAddressToolStripMenuItem";
-            this.manuallyEnterIPAddressToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.manuallyEnterIPAddressToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.manuallyEnterIPAddressToolStripMenuItem.Text = "&Manually enter IP address";
             this.manuallyEnterIPAddressToolStripMenuItem.Click += new System.EventHandler(this.manuallyEnterIPAddressToolStripMenuItem_Click_1);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(217, 6);
+            // 
+            // showPlaybackControlWindowToolStripMenuItem
+            // 
+            this.showPlaybackControlWindowToolStripMenuItem.Checked = true;
+            this.showPlaybackControlWindowToolStripMenuItem.CheckOnClick = true;
+            this.showPlaybackControlWindowToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showPlaybackControlWindowToolStripMenuItem.Name = "showPlaybackControlWindowToolStripMenuItem";
+            this.showPlaybackControlWindowToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.showPlaybackControlWindowToolStripMenuItem.Text = "Show playback control window";
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.helpToolStripMenuItem.Text = "&Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -193,18 +207,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(310, 68);
             this.panel1.TabIndex = 4;
-            // 
-            // showPlaybackControlWindowToolStripMenuItem
-            // 
-            this.showPlaybackControlWindowToolStripMenuItem.CheckOnClick = true;
-            this.showPlaybackControlWindowToolStripMenuItem.Name = "showPlaybackControlWindowToolStripMenuItem";
-            this.showPlaybackControlWindowToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.showPlaybackControlWindowToolStripMenuItem.Text = "Show playback control window";
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(236, 6);
             // 
             // Form1
             // 
