@@ -54,7 +54,7 @@ namespace CastHelper {
 			RokuKeyPress(SpecialKeys.Forward);
 		}
 
-		private void btnStop_Click(object sender, EventArgs e) {
+		private void btnClose_Click(object sender, EventArgs e) {
 			Close();
 		}
 

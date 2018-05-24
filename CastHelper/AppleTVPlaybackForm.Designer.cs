@@ -24,7 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
             this.label1 = new System.Windows.Forms.Label();
-            this.btnStop = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -39,16 +39,17 @@
             this.label1.Size = new System.Drawing.Size(248, 47);
             this.label1.TabIndex = 0;
             // 
-            // btnStop
+            // btnClose
             // 
-            this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStop.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnStop.Location = new System.Drawing.Point(185, 88);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(75, 23);
-            this.btnStop.TabIndex = 1;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(185, 88);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(75, 23);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // progressBar1
             // 
@@ -76,7 +77,7 @@
             this.ClientSize = new System.Drawing.Size(272, 123);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.btnStop);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.label1);
             this.Name = "AppleTVPlaybackForm";
             this.Text = "Cast Helper";
@@ -89,7 +90,7 @@
 		#endregion
 
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button btnStop;
+		private System.Windows.Forms.Button btnClose;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Label label2;
 	}

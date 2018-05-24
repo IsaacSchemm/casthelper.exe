@@ -45,6 +45,10 @@ namespace CastHelper {
 			InitializeComponent();
 		}
 
+		private void btnClose_Click(object sender, EventArgs e) {
+			Close();
+		}
+
 		private void AppleTVPlaybackForm_FormClosing(object sender, FormClosingEventArgs e) {
 			if (!OkToClose && DialogResult.Yes != MessageBox.Show(this, "Are you sure you want to close this window? This will stop video playback on the Apple TV.", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning)) {
 				e.Cancel = true;

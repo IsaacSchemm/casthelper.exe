@@ -164,7 +164,7 @@ namespace CastHelper {
 							Hide();
 							await videoDevice.PlayVideoAsync(txtUrl.Text);
 							Close();
-							break;
+							return;
 						case MediaType.Audio:
 							var audioDevice = comboBox1.SelectedItem as IAudioDevice;
 							if (audioDevice == null) {
@@ -173,7 +173,7 @@ namespace CastHelper {
 							Hide();
 							await audioDevice.PlayAudioAsync(txtUrl.Text, contentType);
 							Close();
-							break;
+							return;
 						case MediaType.Image:
 							throw new NotImplementedException("CastHelper cannot cast photos to this device.");
 						case MediaType.Text:
