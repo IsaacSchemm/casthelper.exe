@@ -48,6 +48,18 @@ namespace CastHelper {
 				}
 			}
 
+			var sidearm = Regex.Match(uri.PathAndQuery, @"/watch/\?Live=([0-9]+)&type=Live");
+			if (sidearm.Success) {
+				try {
+					var urls = await SidearmSports.GetMediaUrlsAsync(uri, int.Parse(sidearm.Groups[1].Value));
+					if (urls.Any()) {
+						return new ResolverResult("text/html", urls);
+					}
+				} catch (Exception ex) {
+					Console.Error.WriteLine(ex);
+				}
+			}
+
 			async Task<ResolverResult> http(string method) {
 				var req = WebRequest.CreateHttp(uri);
 				req.Method = method;

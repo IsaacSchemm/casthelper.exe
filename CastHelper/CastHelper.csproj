@@ -128,6 +128,7 @@
     <Compile Include="AppleTVPlaybackForm.Designer.cs">
       <DependentUpon>AppleTVPlaybackForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SidearmSports.cs" />
     <Compile Include="StretchInternet.cs" />
     <Compile Include="VideoUrlFinder.cs" />
     <EmbeddedResource Include="Form1.resx">
