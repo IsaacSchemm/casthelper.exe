@@ -32,11 +32,6 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         Await TestSimple("http://watchictv.org/live-streaming", "application/x-mpegURL")
     End Function
 
-    <TestMethod()> Public Async Function Cablecast2() As Task
-        ' Requires application/x-mpegurl in accept header; returns a content-type of application/x-mpegURL (notice uppercase)
-        Await TestSimple("http://haverhillcommunitytv.org/video/channel-9-live-stream", "application/x-mpegURL")
-    End Function
-
     <TestMethod()> Public Async Function WiscCesa10() As Task
         ' These school district streams are usually offline (trying to get the .m3u8 returns 404)
         Dim url = "https://ensemble.cesa10.k12.wi.us/Watch/Gq48RnWz"

@@ -37,6 +37,7 @@ namespace CastHelper {
 
 			if (ShowControls) {
 				using (var f = new RokuRemote(Input)) {
+					f.LabelText = $"Currently playing video on {Name}.";
 					f.Text = Name;
 					f.ShowDialog();
 					await f.LastTask;
@@ -69,6 +70,7 @@ namespace CastHelper {
 
 			if (ShowControls) {
 				using (var f = new RokuRemote(Input)) {
+					f.LabelText = $"Currently playing video on {Name}.";
 					f.Text = Name;
 					f.ShowDialog();
 					await f.LastTask;

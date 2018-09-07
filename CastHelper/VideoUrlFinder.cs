@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,21 +10,28 @@ using System.Windows.Forms;
 namespace CastHelper {
 	public static class VideoUrlFinder {
 		// This search ignores query strings
-		private static readonly Regex videoUrlRegex1 = new Regex(@"['""`]((https?:)?//[^'""`]+\.(m3u8|mp4)(\?[^'""`]+)?)['""`]", RegexOptions.IgnoreCase);
-		private static readonly Regex iframeRegex = new Regex(@"<iframe[^>]+src=['""]([^'""]+)", RegexOptions.IgnoreCase);
+		private static readonly Regex videoUrlRegex1 = new Regex(@"['""`]((https?:)?//[^'""`]+\.(m3u8|mp4)(\?[^'""`]+)?)['""`]", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+		private static readonly Regex videoUrlRegex2 = new Regex(@"<video[^>]+src=['""]([^'""]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+		private static readonly Regex iframeRegex = new Regex(@"<iframe[^>]+src=['""]([^'""]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+		private static readonly Regex regularLinkRegex = new Regex(@"<a[^>]+href=['""]([^'""]+)[^>]>+([^<]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-		private static IEnumerable<string> GetUrlRegexMatches(Regex regex, int group, string html) {
+		private static IEnumerable<PlaylistItem> GetUrlRegexMatches(Regex regex, string html) {
 			foreach (Match m in regex.Matches(html)) {
-				string url = m.Groups[group].Value;
+				string url = m.Groups[1].Value;
 				if (url.StartsWith("//")) url = $"http:{url}";
-				yield return url;
+
+				string name = regex == regularLinkRegex
+					? m.Groups[2].Value
+					: url;
+
+				yield return new PlaylistItem(WebUtility.HtmlDecode(name), WebUtility.HtmlDecode(url));
 			}
 		}
-		
-		public static async Task<string> GetVideoUriFromUriAsync(Uri uri, CookieContainer cookieContainer = null) {
+
+		public static async Task<PlaylistItem> GetVideoUriFromUriAsync(Uri uri, CookieContainer cookieContainer = null) {
 			var urls = await GetVideoUrisFromUriAsync(uri, cookieContainer);
 			if (urls.Count() > 1) {
-				using (var f = new SelectForm<string>("Multiple possible video URLs were found.", urls)) {
+				using (var f = new SelectForm<PlaylistItem>("Multiple possible video URLs were found.", urls)) {
 					return f.ShowDialog() == DialogResult.OK
 						? f.SelectedItem
 						: null;
@@ -35,7 +41,7 @@ namespace CastHelper {
 			}
 		}
 
-		public static async Task<IEnumerable<string>> GetVideoUrisFromUriAsync(Uri uri, CookieContainer cookieContainer = null) {
+		public static async Task<IEnumerable<PlaylistItem>> GetVideoUrisFromUriAsync(Uri uri, CookieContainer cookieContainer = null) {
 			var req = WebRequest.CreateHttp(uri);
 			req.Method = "GET";
 			req.Accept = Program.Accept;
@@ -51,10 +57,28 @@ namespace CastHelper {
 			}
 		}
 
-		public static IEnumerable<string> GetVideoUrisFromHtml(string html) {
-			var urls = GetUrlRegexMatches(videoUrlRegex1, 1, html).Distinct().ToList();
-			if (!urls.Any()) urls = GetUrlRegexMatches(iframeRegex, 1, html).Distinct().ToList();
-			return urls;
+		private static IEnumerable<T> DefaultListIfEmpty<T>(this IEnumerable<T> orig, IEnumerable<T> def) {
+			using (var e = orig.GetEnumerator()) {
+				if (e.MoveNext()) {
+					do {
+						yield return e.Current;
+					} while (e.MoveNext());
+				} else {
+					foreach (var o in def) {
+						yield return o;
+					}
+				}
+			}
+		}
+
+		public static IEnumerable<PlaylistItem> GetVideoUrisFromHtml(string html) {
+			return Enumerable.Empty<PlaylistItem>()
+				.Concat(GetUrlRegexMatches(videoUrlRegex1, html))
+				.Concat(GetUrlRegexMatches(videoUrlRegex2, html))
+				.DefaultListIfEmpty(GetUrlRegexMatches(iframeRegex, html))
+				.DefaultListIfEmpty(GetUrlRegexMatches(regularLinkRegex, html))
+				.Distinct()
+				.ToList();
 		}
 	}
 }
