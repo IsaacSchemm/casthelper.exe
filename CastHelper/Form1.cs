@@ -10,7 +10,7 @@ using Zeroconf;
 
 namespace CastHelper {
 	public partial class Form1 : Form {
-		private readonly RokuDeviceDiscoveryClient _discoveryClient;
+		private readonly IRokuDeviceDiscoveryClient _discoveryClient;
 		private IObservable<IZeroconfHost> _appleTvResolver;
 		private IDisposable _appleTvListener;
 
@@ -26,13 +26,16 @@ namespace CastHelper {
 		public Form1() {
 			InitializeComponent();
 
-			_discoveryClient = new RokuDeviceDiscoveryClient();
-			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => AddRoku(e.Device)));
+			_discoveryClient = new UdpRokuDeviceDiscoveryClient();
+			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => {
+				if (e.Context.Device is IHttpRokuDevice r)
+					AddRoku(r);
+			}));
 		}
 
-		private async void AddRoku(IRokuDevice device) {
+		private async void AddRoku(IHttpRokuDevice device) {
 			try {
-				var deviceInfo = await device.Query.GetDeviceInfoAsync();
+				var deviceInfo = await device.GetDeviceInfoAsync();
 				string name = deviceInfo.UserDeviceName;
 				if (string.IsNullOrEmpty(name)) name = deviceInfo.ModelName;
 				AddDevice(new NamedRokuDevice(device, name));
@@ -41,7 +44,7 @@ namespace CastHelper {
 			}
 		}
 
-		private void AddDevice(object device) {
+		private void AddDevice(IDevice device) {
 			comboBox1.Items.Add(device);
 			if (comboBox1.SelectedIndex == -1) {
 				comboBox1.SelectedIndex = 0;
@@ -200,7 +203,7 @@ Zeroconf and System.Reactive, which are included for Apple TV discovery, are ava
 		private void manuallyEnterIPAddressToolStripMenuItem_Click_1(object sender, EventArgs e) {
 			string ip = Microsoft.VisualBasic.Interaction.InputBox("Enter the IP address of the Roku on your local network (as shown in Settings > Network > About):", "Add Roku");
 			if (!string.IsNullOrEmpty(ip) && IPAddress.TryParse(ip, out IPAddress _)) {
-				var device = new RokuDevice(new Uri($"http://{ip}:8060/"), $"roku.custom.{ip}");
+				var device = new HttpRokuDevice($"roku.custom.{ip}", new Uri($"http://{ip}:8060/"));
 				AddRoku(device);
 			}
 		}

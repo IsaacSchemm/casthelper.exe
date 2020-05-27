@@ -7,13 +7,15 @@ namespace CastHelper {
 		Audio
 	}
 
-	public interface IVideoDevice {
+	public interface IDevice {
 		string Name { get; }
+	}
+
+	public interface IVideoDevice : IDevice {
 		Task PlayVideoAsync(string url);
 	}
 
-	public interface IAudioDevice {
-		string Name { get; }
+	public interface IAudioDevice : IDevice {
 		Task PlayAudioAsync(string url, string contentType);
 	}
 }

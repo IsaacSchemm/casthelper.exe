@@ -1,30 +1,24 @@
 ﻿using RokuDotNet.Client;
 using RokuDotNet.Client.Input;
-using RokuDotNet.Client.Query;
 using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace CastHelper {
-	public class NamedRokuDevice : IRokuDevice, IVideoDevice, IAudioDevice {
-		private readonly IRokuDevice _device;
+	public class NamedRokuDevice : IVideoDevice, IAudioDevice {
+		private readonly IHttpRokuDevice _device;
 		public string Name { get; private set; }
 		public bool ShowControls { get; set; }
 
-		public NamedRokuDevice(IRokuDevice device, string name) {
+		public NamedRokuDevice(IHttpRokuDevice device, string name) {
 			_device = device ?? throw new ArgumentNullException(nameof(device));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 
-		public string Id => _device.Id;
-		public IRokuDeviceInput Input => _device.Input;
-		public IRokuDeviceQuery Query => _device.Query;
-		public Uri Location => (_device as RokuDevice)?.Location;
-
 		public async Task PlayVideoAsync(string mediaUrl) {
 			try {
-				var req = WebRequest.CreateHttp(new Uri(Location, $"/input/15985?t=v&u={WebUtility.UrlEncode(mediaUrl)}&k=(null)"));
+				var req = WebRequest.CreateHttp(new Uri(_device.Location, $"/input/15985?t=v&u={WebUtility.UrlEncode(mediaUrl)}&k=(null)"));
 				req.Method = "POST";
 				req.UserAgent = Program.UserAgent;
 				using (var resp = await req.GetResponseAsync())
@@ -34,7 +28,7 @@ namespace CastHelper {
 			}
 
 			if (ShowControls) {
-				using (var f = new RokuRemote(Input)) {
+				using (var f = new RokuRemote(_device.Input)) {
 					f.LabelText = $"Currently playing video on {Name}.";
 					f.Text = Name;
 					f.ShowDialog();
@@ -57,7 +51,7 @@ namespace CastHelper {
 						mediatype = mediaUrl.Split('.').Last();
 						break;
 				}
-				var req = WebRequest.CreateHttp(new Uri(Location, $"/input/15985?t=a&u={WebUtility.UrlEncode(mediaUrl)}&songname=(null)&artistname=(null)&songformat={WebUtility.UrlEncode(mediatype)}&albumarturl=(null)"));
+				var req = WebRequest.CreateHttp(new Uri(_device.Location, $"/input/15985?t=a&u={WebUtility.UrlEncode(mediaUrl)}&songname=(null)&artistname=(null)&songformat={WebUtility.UrlEncode(mediatype)}&albumarturl=(null)"));
 				req.Method = "POST";
 				req.UserAgent = Program.UserAgent;
 				using (var resp = await req.GetResponseAsync())
@@ -67,7 +61,7 @@ namespace CastHelper {
 			}
 
 			if (ShowControls) {
-				using (var f = new RokuRemote(Input)) {
+				using (var f = new RokuRemote(_device.Input)) {
 					f.LabelText = $"Currently playing video on {Name}.";
 					f.Text = Name;
 					f.ShowDialog();
@@ -77,7 +71,7 @@ namespace CastHelper {
 		}
 
 		public override string ToString() {
-			return $"{Name} ({Location.Host})";
+			return $"{Name} ({_device.Location.Host})";
 		}
 	}
 }
