@@ -10,6 +10,7 @@ using Zeroconf;
 
 namespace CastHelper {
 	public partial class Form1 : Form {
+		private readonly CookieContainer _cookieContainer;
 		private readonly IRokuDeviceDiscoveryClient _discoveryClient;
 		private IObservable<IZeroconfHost> _appleTvResolver;
 		private IDisposable _appleTvListener;
@@ -25,6 +26,7 @@ namespace CastHelper {
 
 		public Form1() {
 			InitializeComponent();
+			_cookieContainer = new CookieContainer();
 
 			_discoveryClient = new UdpRokuDeviceDiscoveryClient();
 			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => {
@@ -70,14 +72,15 @@ namespace CastHelper {
 			AddDevice(new VLCDevice());
 #endif
 		}
-		
+
 		private async Task<string> FollowRedirectsToContentTypeAsync() {
 			var req = WebRequest.CreateHttp(txtUrl.Text);
 			req.Method = "HEAD";
 			req.Accept = Program.Accept;
 			req.UserAgent = Program.UserAgent;
-			req.AllowAutoRedirect = false;
+			req.CookieContainer = _cookieContainer;
 			using (var resp = await req.GetResponseAsync()) {
+				txtUrl.Text = resp.ResponseUri.AbsoluteUri;
 				return resp.ContentType;
 			}
 		}
