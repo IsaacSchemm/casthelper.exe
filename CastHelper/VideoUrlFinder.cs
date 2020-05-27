@@ -15,7 +15,7 @@ namespace CastHelper {
 		private static readonly Regex iframeRegex = new Regex(@"<iframe[^>]+src=['""]([^'""]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 		private static readonly Regex regularLinkRegex = new Regex(@"<a[^>]+href=['""]([^'""]+)[^>]+>+([^<]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-		private static IEnumerable<PlaylistItem> GetUrlRegexMatches(Regex regex, string html) {
+		private static IEnumerable<PlaylistItem> GetUrlRegexMatches(Uri relativeTo, Regex regex, string html) {
 			foreach (Match m in regex.Matches(html)) {
 				string url = m.Groups[1].Value;
 				if (url.StartsWith("//")) url = $"http:{url}";
@@ -24,7 +24,7 @@ namespace CastHelper {
 					? m.Groups[2].Value
 					: url;
 
-				yield return new PlaylistItem(WebUtility.HtmlDecode(name), WebUtility.HtmlDecode(url));
+				yield return new PlaylistItem(WebUtility.HtmlDecode(name), new Uri(relativeTo, WebUtility.HtmlDecode(url)).AbsoluteUri);
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace CastHelper {
 			using (var resp = await req.GetResponseAsync())
 			using (var sr = new StreamReader(resp.GetResponseStream())) {
 				string html = await sr.ReadToEndAsync();
-				return GetVideoUrisFromHtml(html);
+				return GetVideoUrisFromHtml(uri, html);
 			}
 		}
 
@@ -71,12 +71,12 @@ namespace CastHelper {
 			}
 		}
 
-		public static IEnumerable<PlaylistItem> GetVideoUrisFromHtml(string html) {
+		public static IEnumerable<PlaylistItem> GetVideoUrisFromHtml(Uri relativeTo, string html) {
 			return Enumerable.Empty<PlaylistItem>()
-				.Concat(GetUrlRegexMatches(videoUrlRegex1, html))
-				.Concat(GetUrlRegexMatches(videoUrlRegex2, html))
-				.DefaultListIfEmpty(GetUrlRegexMatches(iframeRegex, html))
-				.DefaultListIfEmpty(GetUrlRegexMatches(regularLinkRegex, html))
+				.Concat(GetUrlRegexMatches(relativeTo, videoUrlRegex1, html))
+				.Concat(GetUrlRegexMatches(relativeTo, videoUrlRegex2, html))
+				.DefaultListIfEmpty(GetUrlRegexMatches(relativeTo, iframeRegex, html))
+				.DefaultListIfEmpty(GetUrlRegexMatches(relativeTo, regularLinkRegex, html))
 				.Distinct()
 				.ToList();
 		}
