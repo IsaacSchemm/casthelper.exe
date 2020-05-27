@@ -34,7 +34,6 @@
             // btnInstantReplay
             // 
             this.btnInstantReplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnInstantReplay.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnInstantReplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnInstantReplay.Location = new System.Drawing.Point(12, 77);
             this.btnInstantReplay.Name = "btnInstantReplay";
@@ -47,7 +46,6 @@
             // btnRewind
             // 
             this.btnRewind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRewind.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnRewind.Font = new System.Drawing.Font("Webdings", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.btnRewind.Location = new System.Drawing.Point(45, 77);
             this.btnRewind.Name = "btnRewind";
@@ -60,7 +58,6 @@
             // btnPlayPause
             // 
             this.btnPlayPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnPlayPause.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnPlayPause.Font = new System.Drawing.Font("Webdings", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.btnPlayPause.Location = new System.Drawing.Point(78, 77);
             this.btnPlayPause.Name = "btnPlayPause";
@@ -73,7 +70,6 @@
             // btnFastForward
             // 
             this.btnFastForward.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnFastForward.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnFastForward.Font = new System.Drawing.Font("Webdings", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.btnFastForward.Location = new System.Drawing.Point(111, 77);
             this.btnFastForward.Name = "btnFastForward";
