@@ -17,7 +17,6 @@ using Zeroconf;
 
 namespace CastHelper {
 	public partial class Form1 : Form {
-		private readonly CookieContainer _cookieContainer;
 		private readonly RokuDeviceDiscoveryClient _discoveryClient;
 		private IObservable<IZeroconfHost> _appleTvResolver;
 		private IDisposable _appleTvListener;
@@ -33,7 +32,6 @@ namespace CastHelper {
 
 		public Form1() {
 			InitializeComponent();
-			_cookieContainer = new CookieContainer();
 
 			_discoveryClient = new RokuDeviceDiscoveryClient();
 			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => AddRoku(e.Device)));
@@ -79,26 +77,14 @@ namespace CastHelper {
 		}
 		
 		private async Task<string> FollowRedirectsToContentTypeAsync() {
-			for (int i = 0; i < 50; i++) {
-				var result = await Resolver.ResolveAsync(txtUrl.Text, _cookieContainer);
-				if (result.Links.Count() == 1) {
-					txtUrl.Text = result.Links.Select(x => x.Url).Single();
-					continue;
-				} else if (result.Links.Any()) {
-					using (var f = new SelectForm<PlaylistItem>(Text, result.Links)) {
-						if (f.ShowDialog() == DialogResult.OK) {
-							txtUrl.Text = f.SelectedItem.Url;
-							continue;
-						} else {
-							return null;
-						}
-					}
-				} else {
-					return result.ContentType;
-				}
+			var req = WebRequest.CreateHttp(txtUrl.Text);
+			req.Method = "HEAD";
+			req.Accept = Program.Accept;
+			req.UserAgent = Program.UserAgent;
+			req.AllowAutoRedirect = false;
+			using (var resp = await req.GetResponseAsync()) {
+				return resp.ContentType;
 			}
-
-			throw new Exception("Too many redirects");
 		}
 
 		private async void btnPlay_Click(object sender, EventArgs e) {
@@ -132,18 +118,14 @@ namespace CastHelper {
 						case "text":
 							type = MediaType.Text;
 							break;
-						default:
-							if (contentType.StartsWith("application/dash+xml")) {
-								type = MediaType.Video;
-							} else if (contentType.StartsWith("application/vnd.ms-sstr+xml")) {
-								type = MediaType.Video;
-							}
+						case "application":
+							type = contentType.Contains("mpegurl")
+								? MediaType.Video
+								: MediaType.Unknown;
 							break;
-					}
-
-					if (contentType.Contains("mpegurl")) {
-						// Assume HLS
-						type = MediaType.Video;
+						default:
+							type = MediaType.Unknown;
+							break;
 					}
 
 					if (type == MediaType.Unknown) {
@@ -213,8 +195,8 @@ namespace CastHelper {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show(this, @"CastHelper 1.2
-Copyright © 2018 Isaac Schemm
+			MessageBox.Show(this, @"CastHelper 2.0
+Copyright © 2018-2020 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 
 RokuDotNet
@@ -246,13 +228,10 @@ Zeroconf and System.Reactive, which are included for Apple TV discovery, are ava
 		}
 
 		private void manuallyEnterIPAddressToolStripMenuItem_Click_1(object sender, EventArgs e) {
-			using (var f = new InputBox()) {
-				f.Text = "Add Roku";
-				string ip = f.ShowDialog(this) == DialogResult.OK ? f.InputText : null;
-				if (!string.IsNullOrEmpty(ip) && IPAddress.TryParse(ip, out IPAddress addr)) {
-					var device = new RokuDevice(new Uri($"http://{ip}:8060/"), $"roku.custom.{ip}");
-					AddRoku(device);
-				}
+			string ip = Microsoft.VisualBasic.Interaction.InputBox("Enter the IP address of the Roku on your local network (as shown in Settings > Network > About):", "Add Roku");
+			if (!string.IsNullOrEmpty(ip) && IPAddress.TryParse(ip, out IPAddress _)) {
+				var device = new RokuDevice(new Uri($"http://{ip}:8060/"), $"roku.custom.{ip}");
+				AddRoku(device);
 			}
 		}
 	}
