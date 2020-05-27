@@ -73,9 +73,8 @@ namespace CastHelper {
 			});
 
 #if DEBUG
-			Task.Delay(5000).ContinueWith(t => {
-				BeginInvoke(new Action(() => AddDevice(new EdgeDevice())));
-			});
+			AddDevice(new EdgeDevice());
+			AddDevice(new VLCDevice());
 #endif
 		}
 		
