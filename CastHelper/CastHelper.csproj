@@ -69,12 +69,6 @@
     <Compile Include="RokuRemote.Designer.cs">
       <DependentUpon>RokuRemote.cs</DependentUpon>
     </Compile>
-    <Compile Include="SelectForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SelectForm.Designer.cs">
-      <DependentUpon>SelectForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="AppleTVPlaybackForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,9 +90,6 @@
     </Compile>
     <EmbeddedResource Include="RokuRemote.resx">
       <DependentUpon>RokuRemote.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SelectForm.resx">
-      <DependentUpon>SelectForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AppleTVPlaybackForm.resx">
       <DependentUpon>AppleTVPlaybackForm.cs</DependentUpon>
