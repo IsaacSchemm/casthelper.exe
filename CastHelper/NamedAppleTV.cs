@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -31,7 +28,6 @@ namespace CastHelper {
 			using (var resp = await req1.GetResponseAsync())
 			using (var s = resp.GetResponseStream()) { }
 
-			// Apple TV initiates a reverse HTTP connection, but instead of listening to it, we'll just do this
 			using (var f = new AppleTVPlaybackForm())
 			using (Timer timer = new Timer(1000)) {
 				f.LabelText = $"Currently playing video on {Name}. Closing this window will stop playback.";

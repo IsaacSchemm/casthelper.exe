@@ -2,15 +2,13 @@
 using RokuDotNet.Client.Input;
 using RokuDotNet.Client.Query;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CastHelper {
 	public class NamedRokuDevice : IRokuDevice, IVideoDevice, IAudioDevice {
-		private IRokuDevice _device;
+		private readonly IRokuDevice _device;
 		public string Name { get; private set; }
 		public bool ShowControls { get; set; }
 

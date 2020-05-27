@@ -1,16 +1,9 @@
 ﻿using RokuDotNet.Client;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Zeroconf;
@@ -71,7 +64,6 @@ namespace CastHelper {
 			});
 
 #if DEBUG
-			AddDevice(new EdgeDevice());
 			AddDevice(new VLCDevice());
 #endif
 		}
@@ -101,25 +93,18 @@ namespace CastHelper {
 			try {
 				// Get type of media
 				string contentType = await FollowRedirectsToContentTypeAsync();
-				contentType = contentType?.ToLowerInvariant();
 				
 				if (contentType != null) {
-					MediaType type = MediaType.Unknown;
-					switch (contentType.Split('/').First()) {
+					MediaType type;
+					switch (contentType.Split('/').First().ToLowerInvariant()) {
 						case "audio":
 							type = MediaType.Audio;
 							break;
 						case "video":
 							type = MediaType.Video;
 							break;
-						case "image":
-							type = MediaType.Image;
-							break;
-						case "text":
-							type = MediaType.Text;
-							break;
 						case "application":
-							type = contentType.Contains("mpegurl")
+							type = contentType.IndexOf("mpegurl", StringComparison.InvariantCultureIgnoreCase) >= 0
 								? MediaType.Video
 								: MediaType.Unknown;
 							break;
@@ -128,18 +113,9 @@ namespace CastHelper {
 							break;
 					}
 
-					if (type == MediaType.Unknown) {
-						using (var f = new SelectForm<MediaType>("Could not detect media type. Please select a type below:", (MediaType[])Enum.GetValues(typeof(MediaType)))) {
-							if (f.ShowDialog(this) == DialogResult.OK) {
-								type = f.SelectedItem;
-							}
-						}
-					}
-
 					switch (type) {
 						case MediaType.Video:
-							var videoDevice = comboBox1.SelectedItem as IVideoDevice;
-							if (videoDevice == null) {
+							if (!(comboBox1.SelectedItem is IVideoDevice videoDevice)) {
 								throw new NotImplementedException("CastHelper cannot cast video to this device.");
 							}
 							Hide();
@@ -147,18 +123,15 @@ namespace CastHelper {
 							Close();
 							return;
 						case MediaType.Audio:
-							var audioDevice = comboBox1.SelectedItem as IAudioDevice;
-							if (audioDevice == null) {
+							if (!(comboBox1.SelectedItem is IAudioDevice audioDevice)) {
 								throw new NotImplementedException("CastHelper cannot cast audio to this device.");
 							}
 							Hide();
 							await audioDevice.PlayAudioAsync(txtUrl.Text, contentType);
 							Close();
 							return;
-						case MediaType.Image:
-							throw new NotImplementedException("CastHelper cannot cast photos to this device.");
-						case MediaType.Text:
-							MessageBox.Show(this, "This URL refers to a web page or document, not to a raw media file or stream.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						default:
+							MessageBox.Show(this, $"CastHelper does not recognize the content type {contentType}.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 							break;
 					}
 				}
@@ -198,9 +171,6 @@ namespace CastHelper {
 			MessageBox.Show(this, @"CastHelper 2.0
 Copyright © 2018-2020 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
-
-RokuDotNet
-Copyright © 2018 Phillip Hoff
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ""Software""), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
