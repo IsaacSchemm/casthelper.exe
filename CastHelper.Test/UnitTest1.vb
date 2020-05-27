@@ -9,7 +9,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         For i = 0 To 10
             Dim result = Await Resolver.ResolveAsync(url, cookieContainer)
             If result.Links.Any Then
-                url = result.Links.Single.Url
+                url = result.Links.Where(Function(x) Not x.Url.Contains("googletagmanager")).Single.Url
             ElseIf result.ContentType IsNot Nothing Then
                 Assert.AreEqual(expected, result.ContentType)
                 Exit For
@@ -24,7 +24,12 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
     <TestMethod()> Public Async Function JWPlayerIframe() As Task
         ' JW Platform iframe embed
-        Await TestSimple("https://www.uwec.edu/LTS/services/media/streaming/footbridge.htm", "application/vnd.apple.mpegurl")
+        Dim cookieContainer As New CookieContainer
+        Dim result1 = Await Resolver.ResolveAsync("https://www.uwec.edu/LTS/services/media/streaming/footbridge.htm", cookieContainer)
+        Dim result2 = Await Resolver.ResolveAsync(result1.Links.Single().Url, cookieContainer)
+        Dim result3 = Await Resolver.ResolveAsync(result2.Links.First().Url, cookieContainer)
+        Dim result4 = Await Resolver.ResolveAsync(result3.Links.Single().Url, cookieContainer)
+        Assert.AreEqual("video/mp4", result4.ContentType)
     End Function
 
     <TestMethod()> Public Async Function Cablecast1() As Task
@@ -59,7 +64,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
     <TestMethod()> Public Async Function StretchInternetVOD() As Task
         ' This site has special behavior - see Resolver.cs
-        Await TestSimple("https://portal.stretchinternet.com/kwu/portal.htm?eventId=444970&streamType=video", "video/mp4")
+        Await TestSimple("https://portal.stretchinternet.com/uwplatt/portal.htm?eventId=582784&streamType=video", "video/mp4")
     End Function
 
     <TestMethod()> Public Async Function WBAY() As Task
@@ -74,17 +79,12 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
     <TestMethod()> Public Async Function SanDiegoZoo() As Task
         ' iframe, throws 406 if text/html not acceptable
-        Dim result1 = Await Resolver.ResolveAsync("http://zoo.sandiegozoo.org/cams/panda-cam")
+        Dim result1 = Await Resolver.ResolveAsync("https://zoo.sandiegozoo.org/cams/hippo-cam")
         Dim link1 = result1.Links.Where(Function(l) Not l.Url.Contains("googletagmanager")).Single
         Dim result2 = Await Resolver.ResolveAsync(link1.Url)
         For Each link2 In result2.Links
             Await TestSimple(link2.Url, "application/vnd.apple.mpegurl")
         Next
-    End Function
-
-    <TestMethod()> Public Async Function SingleMP4() As Task
-        ' Anvato
-        Await TestSimple("http://www.html5videoplayer.net/html5video/mp4-h-264-video-test/", "video/mp4")
     End Function
 
     <TestMethod()> Public Async Function MultipleMP4() As Task
