@@ -1,39 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CastHelper {
+	/// <summary>
+	/// Allows CastHelper to parse an M3U playlist given to it by a website to present the user with a set of options.
+	/// </summary>
 	public static class Disambiguation {
-		public static async Task<string> DisambiguateM3uAsync(Uri uri, CookieContainer cookieContainer = null) {
-			var list = await ParseM3uAsync(uri, cookieContainer);
-			using (var f = new SelectForm<PlaylistItem>("Multiple possible video URLs were found.", list)) {
-				return f.ShowDialog() == DialogResult.OK
-					? f.SelectedItem?.Url
-					: null;
-			}
-		}
-
-		public static async Task<IReadOnlyList<PlaylistItem>> ParseM3uAsync(Uri uri, CookieContainer cookieContainer = null) {
-			var req = WebRequest.CreateHttp(uri);
-			req.Method = "GET";
-			req.Accept = Program.Accept;
-			req.UserAgent = Program.UserAgent;
-			req.AllowAutoRedirect = false;
-			if (cookieContainer != null) {
-				req.CookieContainer = cookieContainer;
-			}
-			using (var resp = await req.GetResponseAsync())
-			using (var sr = new StreamReader(resp.GetResponseStream())) {
-				return await ParseM3uAsync(sr);
-			}
-		}
-
 		public static async Task<IReadOnlyList<PlaylistItem>> ParseM3uAsync(string contents) {
 			using (var sr = new StringReader(contents)) {
 				return await ParseM3uAsync(sr);
