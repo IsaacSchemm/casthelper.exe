@@ -73,15 +73,21 @@ namespace CastHelper {
 #endif
 		}
 
-		private async Task<string> FollowRedirectsToContentTypeAsync() {
-			var req = WebRequest.CreateHttp(txtUrl.Text);
-			req.Method = "HEAD";
-			req.Accept = Program.Accept;
-			req.UserAgent = Program.UserAgent;
-			req.CookieContainer = _cookieContainer;
-			using (var resp = await req.GetResponseAsync()) {
-				txtUrl.Text = resp.ResponseUri.AbsoluteUri;
-				return resp.ContentType;
+		private async Task<string> FollowRedirectsToContentTypeAsync(string method = "HEAD") {
+			try {
+				var req = WebRequest.CreateHttp(txtUrl.Text);
+				req.Method = method;
+				req.Accept = Program.Accept;
+				req.UserAgent = Program.UserAgent;
+				req.CookieContainer = _cookieContainer;
+				using (var resp = await req.GetResponseAsync()) {
+					txtUrl.Text = resp.ResponseUri.AbsoluteUri;
+					return resp.ContentType;
+				}
+			} catch (WebException ex) when (method == "HEAD" && (ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.MethodNotAllowed) {
+				return await FollowRedirectsToContentTypeAsync("GET");
+			} catch (WebException ex) when (method == "HEAD" && (ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound) {
+				return await FollowRedirectsToContentTypeAsync("GET");
 			}
 		}
 
@@ -174,7 +180,7 @@ namespace CastHelper {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show(this, @"CastHelper 2.0.1
+			MessageBox.Show(this, @"CastHelper 2.0.2
 Copyright © 2018-2020 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 
