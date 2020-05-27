@@ -13,7 +13,7 @@ namespace CastHelper {
 		private static readonly Regex videoUrlRegex1 = new Regex(@"['""`]((https?:)?//[^'""`]+\.(m3u8|mp4)(\?[^'""`]+)?)['""`]", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 		private static readonly Regex videoUrlRegex2 = new Regex(@"<video[^>]+src=['""]([^'""]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 		private static readonly Regex iframeRegex = new Regex(@"<iframe[^>]+src=['""]([^'""]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-		private static readonly Regex regularLinkRegex = new Regex(@"<a[^>]+href=['""]([^'""]+)[^>]>+([^<]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+		private static readonly Regex regularLinkRegex = new Regex(@"<a[^>]+href=['""]([^'""]+)[^>]+>+([^<]+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
 		private static IEnumerable<PlaylistItem> GetUrlRegexMatches(Regex regex, string html) {
 			foreach (Match m in regex.Matches(html)) {
