@@ -12,8 +12,6 @@ namespace CastHelper {
 	public partial class Form1 : Form {
 		private readonly CookieContainer _cookieContainer;
 		private readonly IRokuDeviceDiscoveryClient _discoveryClient;
-		private IObservable<IZeroconfHost> _appleTvResolver;
-		private IDisposable _appleTvListener;
 
 		public string Url {
 			get {
@@ -56,20 +54,8 @@ namespace CastHelper {
 
 			Rescan();
 
-			_appleTvResolver = ZeroconfResolver.ResolveContinuous("_airplay._tcp.local.");
-			_appleTvListener = _appleTvResolver.Subscribe(service => {
-				var address = service.IPAddresses.Select(a => IPAddress.Parse(a)).FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-				if (address != null) {
-					BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.DisplayName, address))));
-				}
-			});
-
 #if DEBUG
-			Task.Delay(5000).ContinueWith(_ => {
-				BeginInvoke(new Action(() => {
-					AddDevice(new VLCDevice());
-				}));
-			});
+			//AddDevice(new VLCDevice());
 #endif
 		}
 
@@ -180,7 +166,7 @@ namespace CastHelper {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show(this, @"CastHelper 2.0.2
+			MessageBox.Show(this, @"CastHelper 2.1
 Copyright © 2018-2020 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 
@@ -200,19 +186,44 @@ Zeroconf and System.Reactive, which are included for Apple TV discovery, are ava
 		protected override void Dispose(bool disposing) {
 			if (disposing) {
 				components?.Dispose();
-				_appleTvListener?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
 
+		private async void RokuRescan() {
+			try {
+				await _discoveryClient.DiscoverDevicesAsync(context => {
+					BeginInvoke(new Action(() => {
+						if (context.Device is IHttpRokuDevice r)
+							AddRoku(r);
+					}));
+					return Task.FromResult(false);
+				});
+			} catch (Exception ex) {
+				Console.Error.WriteLine(ex);
+				MessageBox.Show(this, "Could not scan for Roku devices.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+		private async void AppleTVRescan() {
+			try {
+				var list = await ZeroconfResolver.ResolveAsync("_airplay._tcp.local.", TimeSpan.FromSeconds(5));
+				foreach (var service in list) {
+					var addresses = service.IPAddresses
+						.Select(a => IPAddress.Parse(a))
+						.Where(x => x.AddressFamily == AddressFamily.InterNetwork);
+					foreach (var address in addresses)
+						BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.DisplayName, address))));
+				}
+			} catch (Exception ex) {
+				Console.Error.WriteLine(ex);
+				MessageBox.Show(this, "Could not scan for Apple TV devices.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
 		private void Rescan() {
-			_discoveryClient.DiscoverDevicesAsync(context => {
-				BeginInvoke(new Action(() => {
-					if (context.Device is IHttpRokuDevice r)
-						AddRoku(r);
-				}));
-				return Task.FromResult(false);
-			});
+			RokuRescan();
+			AppleTVRescan();
 		}
 
 		private void rescanToolStripMenuItem_Click_1(object sender, EventArgs e) {
