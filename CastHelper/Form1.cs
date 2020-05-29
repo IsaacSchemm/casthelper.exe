@@ -27,12 +27,7 @@ namespace CastHelper {
 		public Form1() {
 			InitializeComponent();
 			_cookieContainer = new CookieContainer();
-
 			_discoveryClient = new UdpRokuDeviceDiscoveryClient();
-			_discoveryClient.DeviceDiscovered += (o, e) => BeginInvoke(new Action(() => {
-				if (e.Context.Device is IHttpRokuDevice r)
-					AddRoku(r);
-			}));
 		}
 
 		private async void AddRoku(IHttpRokuDevice device) {
@@ -58,7 +53,8 @@ namespace CastHelper {
 
 		private void Form1_Shown(object sender, EventArgs e) {
 			btnPlay.Enabled = false;
-			_discoveryClient.DiscoverDevicesAsync();
+
+			Rescan();
 
 			_appleTvResolver = ZeroconfResolver.ResolveContinuous("_airplay._tcp.local.");
 			_appleTvListener = _appleTvResolver.Subscribe(service => {
@@ -69,7 +65,11 @@ namespace CastHelper {
 			});
 
 #if DEBUG
-			AddDevice(new VLCDevice());
+			Task.Delay(5000).ContinueWith(_ => {
+				BeginInvoke(new Action(() => {
+					AddDevice(new VLCDevice());
+				}));
+			});
 #endif
 		}
 
@@ -205,8 +205,18 @@ Zeroconf and System.Reactive, which are included for Apple TV discovery, are ava
 			base.Dispose(disposing);
 		}
 
+		private void Rescan() {
+			_discoveryClient.DiscoverDevicesAsync(context => {
+				BeginInvoke(new Action(() => {
+					if (context.Device is IHttpRokuDevice r)
+						AddRoku(r);
+				}));
+				return Task.FromResult(false);
+			});
+		}
+
 		private void rescanToolStripMenuItem_Click_1(object sender, EventArgs e) {
-			_discoveryClient.DiscoverDevicesAsync();
+			Rescan();
 		}
 
 		private void manuallyEnterIPAddressToolStripMenuItem_Click_1(object sender, EventArgs e) {
