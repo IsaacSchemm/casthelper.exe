@@ -120,5 +120,10 @@
       <Version>3.3.16</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSES.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
