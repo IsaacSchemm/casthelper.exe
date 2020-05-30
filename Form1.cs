@@ -164,7 +164,7 @@ namespace CastHelper {
 Copyright © 2018-2020 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 
-See LICENSES.txt for license information.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+See casthelper-licenses.txt for license information.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// <summary>

@@ -121,7 +121,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LICENSES.txt">
+    <Content Include="casthelper-licenses.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
