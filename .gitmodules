@@ -1,0 +1,6 @@
+[submodule "RokuDotNet"]
+	path = RokuDotNet
+	url = https://github.com/philliphoff/RokuDotNet
+[submodule "Zeroconf"]
+	path = Zeroconf
+	url = https://github.com/novotnyllc/Zeroconf
