@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Zeroconf;
 
 namespace CastHelper {
-	public partial class Form1 : Form {
+	public partial class MainForm : Form {
 		private readonly CookieContainer _cookieContainer;
 		private readonly IRokuDeviceDiscoveryClient _discoveryClient;
 
@@ -22,7 +22,7 @@ namespace CastHelper {
 			}
 		}
 
-		public Form1() {
+		public MainForm() {
 			InitializeComponent();
 			_cookieContainer = new CookieContainer();
 			_discoveryClient = new UdpRokuDeviceDiscoveryClient();
