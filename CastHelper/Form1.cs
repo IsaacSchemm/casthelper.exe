@@ -50,13 +50,7 @@ namespace CastHelper {
 		}
 
 		private void Form1_Shown(object sender, EventArgs e) {
-			btnPlay.Enabled = false;
-
 			Rescan();
-
-#if DEBUG
-			//AddDevice(new VLCDevice());
-#endif
 		}
 
 		private async Task<string> FollowRedirectsToContentTypeAsync(string method = "HEAD") {
@@ -216,11 +210,17 @@ See LICENSES.txt for license information.", Text, MessageBoxButtons.OK, MessageB
 		}
 
 		private void Rescan() {
+			comboBox1.Items.Clear();
+
 			RokuRescan();
 			AppleTVRescan();
+
+			//AddDevice(new VLCDevice());
 		}
 
 		private void rescanToolStripMenuItem1_Click(object sender, EventArgs e) {
+			btnPlay.Enabled = false;
+			panel1.Visible = true;
 			Rescan();
 		}
 
