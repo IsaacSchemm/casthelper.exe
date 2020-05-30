@@ -226,7 +226,7 @@ Zeroconf and System.Reactive, which are included for Apple TV discovery, are ava
 			AppleTVRescan();
 		}
 
-		private void rescanToolStripMenuItem_Click_1(object sender, EventArgs e) {
+		private void rescanToolStripMenuItem1_Click(object sender, EventArgs e) {
 			Rescan();
 		}
 
