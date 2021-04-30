@@ -1,4 +1,5 @@
-﻿using RokuDotNet.Client;
+﻿using CrossInterfaceRokuDeviceDiscovery;
+using RokuDotNet.Client;
 using System;
 using System.Data;
 using System.Linq;
@@ -25,7 +26,12 @@ namespace CastHelper {
 		public MainForm() {
 			InitializeComponent();
 			_cookieContainer = new CookieContainer();
-			_discoveryClient = new UdpRokuDeviceDiscoveryClient();
+
+			var addresses = Dns.GetHostEntry(Dns.GetHostName())
+				.AddressList
+				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork || ip.AddressFamily == AddressFamily.InterNetworkV6)
+				.ToList();
+			_discoveryClient = new CrossInterfaceRokuDeviceDiscoveryClient(addresses);
 		}
 
 		private async void AddRoku(IHttpRokuDevice device) {
@@ -161,7 +167,7 @@ namespace CastHelper {
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
 			MessageBox.Show(this, @"CastHelper 3.0
-Copyright © 2018-2020 Isaac Schemm
+Copyright © 2018-2021 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 
 See casthelper-licenses.txt for license information.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
