@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Zeroconf;
@@ -30,7 +31,7 @@ namespace CastHelper {
 
 			var addresses = Dns.GetHostEntry(Dns.GetHostName())
 				.AddressList
-				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork || ip.AddressFamily == AddressFamily.InterNetworkV6)
+				.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
 				.ToList();
 			_discoveryClient = new CrossInterfaceRokuDeviceDiscoveryClient(addresses);
 		}
@@ -215,7 +216,9 @@ SOFTWARE.");
 			base.Dispose(disposing);
 		}
 
-		private async void RokuRescan() {
+		private async Task RokuRescan() {
+			var cts = new CancellationTokenSource();
+			cts.CancelAfter(TimeSpan.FromSeconds(5));
 			try {
 				await _discoveryClient.DiscoverDevicesAsync(context => {
 					BeginInvoke(new Action(() => {
@@ -223,34 +226,30 @@ SOFTWARE.");
 							AddRoku(r);
 					}));
 					return Task.FromResult(false);
-				});
-			} catch (Exception ex) {
-				Console.Error.WriteLine(ex);
-				MessageBox.Show(this, "Could not scan for Roku devices.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}, cts.Token);
+			} catch (TaskCanceledException) { }
+		}
+
+		private async Task AppleTVRescan() {
+			var list = await ZeroconfResolver.ResolveAsync("_airplay._tcp.local.", TimeSpan.FromSeconds(5));
+			foreach (var service in list) {
+				var addresses = service.IPAddresses
+					.Select(a => IPAddress.Parse(a))
+					.Where(x => x.AddressFamily == AddressFamily.InterNetwork);
+				foreach (var address in addresses)
+					BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.DisplayName, address))));
 			}
 		}
 
-		private async void AppleTVRescan() {
-			try {
-				var list = await ZeroconfResolver.ResolveAsync("_airplay._tcp.local.", TimeSpan.FromSeconds(5));
-				foreach (var service in list) {
-					var addresses = service.IPAddresses
-						.Select(a => IPAddress.Parse(a))
-						.Where(x => x.AddressFamily == AddressFamily.InterNetwork);
-					foreach (var address in addresses)
-						BeginInvoke(new Action(() => AddDevice(new NamedAppleTV(service.DisplayName, address))));
-				}
-			} catch (Exception ex) {
-				Console.Error.WriteLine(ex);
-				MessageBox.Show(this, "Could not scan for Apple TV devices.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-
-		private void Rescan() {
+		private async void Rescan() {
 			comboBox1.Items.Clear();
 
-			RokuRescan();
-			AppleTVRescan();
+			try {
+				await Task.WhenAll(RokuRescan(), AppleTVRescan());
+			} catch (Exception ex) {
+				Console.Error.WriteLine(ex);
+				MessageBox.Show(this, "Error encountered while scanning for devices. Run this application in a command prompt with standard error redirection (e.g. casthelper 2> err.txt) for more details.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 
 			//AddDevice(new VLCDevice());
 		}
