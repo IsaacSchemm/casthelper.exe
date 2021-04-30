@@ -250,8 +250,6 @@ SOFTWARE.");
 				Console.Error.WriteLine(ex);
 				MessageBox.Show(this, "Error encountered while scanning for devices. Run this application in a command prompt with standard error redirection (e.g. casthelper 2> err.txt) for more details.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
-
-			//AddDevice(new VLCDevice());
 		}
 
 		private void rescanToolStripMenuItem1_Click(object sender, EventArgs e) {
