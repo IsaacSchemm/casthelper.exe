@@ -31,7 +31,7 @@ will also get an error when the content type does not begin with `audio/` or
 
 The request headers sent by Cast Helper are:
 
-    User-Agent: CastHelper/2.0 (https://github.com/IsaacSchemm/casthelper.exe)
+    User-Agent: CastHelper/3.0 (https://github.com/IsaacSchemm/casthelper.exe)
 	Accept: application/vnd.apple.mpegurl,video/*,audio/*
 
 If you are developing a web application and you want your users to be able to
