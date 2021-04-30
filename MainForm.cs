@@ -160,7 +160,7 @@ namespace CastHelper {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show(this, @"CastHelper 2.1
+			MessageBox.Show(this, @"CastHelper 3.0
 Copyright © 2018-2020 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 

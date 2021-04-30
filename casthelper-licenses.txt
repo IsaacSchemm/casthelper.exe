@@ -1,5 +1,5 @@
-CastHelper 2.1
-Copyright © 2018-2020 Isaac Schemm
+CastHelper 3.0
+Copyright © 2018-2021 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
