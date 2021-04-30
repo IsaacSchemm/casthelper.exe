@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace CastHelper {
 	static class Program {
 		internal static string Accept = "application/vnd.apple.mpegurl,video/*,audio/*";
-		internal static string UserAgent = "CastHelper/2.0 (https://github.com/IsaacSchemm/casthelper.exe)";
+		internal static string UserAgent = "CastHelper/3.0 (https://github.com/IsaacSchemm/casthelper.exe)";
 
 		/// <summary>
 		/// The main entry point for the application.

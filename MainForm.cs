@@ -2,6 +2,7 @@
 using RokuDotNet.Client;
 using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -166,11 +167,41 @@ namespace CastHelper {
 		}
 
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
-			MessageBox.Show(this, @"CastHelper 3.0
+			string tempFile = Path.Combine(Path.GetTempPath(), "casthelper-licenses.txt");
+			File.WriteAllText(tempFile, @"CastHelper 3.0
 Copyright © 2018-2021 Isaac Schemm
 https://github.com/IsaacSchemm/casthelper.exe
 
-See casthelper-licenses.txt for license information.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+RokuDotNet
+Copyright © 2018 Phillip Hoff
+https://github.com/philliphoff/RokuDotNet
+
+Zeroconf
+Copyright © 2016-2020 Claire Novotny
+https://github.com/novotnyllc/Zeroconf
+
+System.Reactive
+Copyright © .NET Foundation and Contributors
+https://github.com/dotnet/reactive
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the ""Software""), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.");
+			System.Diagnostics.Process.Start("notepad.exe", tempFile);
 		}
 
 		/// <summary>
