@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
@@ -10,10 +10,6 @@
     <PackageReference Include="CrossInterfaceRokuDeviceDiscovery" Version="1.0.0-rc1" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="Zeroconf" Version="3.4.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
   </ItemGroup>
 
 </Project>
